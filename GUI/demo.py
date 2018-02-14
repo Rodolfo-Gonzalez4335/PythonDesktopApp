@@ -24,6 +24,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFil
 from PyQt5.QtGui import QIcon
 from fileparsing import parsing
 import pymysql.cursors
+import socket
 #import mysql.connector
 
 
@@ -48,7 +49,7 @@ class App(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         self.inputButton = QPushButton("Input Files")
-        self.connectButton =  QPushButton("Connect to Server")
+        self.connectButton =  QPushButton("See Server Mappings")
         v_box = QHBoxLayout()
         v_box.addWidget(self.inputButton)
         v_box.addWidget(self.connectButton)
@@ -85,15 +86,7 @@ class App(QWidget):
             print(fileName)
 
     def connectToServer(self):
-        conn = pymysql.connect(
-                user='sql3220017', password='Law9TPqxW7',
-                host='sql3.freemysqlhosting.net',database='sql3220017')
-        c = conn.cursor();
-        if c.open:
-            print("Connected")
-        else:
-            print("bohoo not connected")
-        conn.close()
+        print ("Create Window")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

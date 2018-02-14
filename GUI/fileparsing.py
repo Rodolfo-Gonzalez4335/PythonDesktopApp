@@ -13,7 +13,16 @@ cgitb.enable()
 print("Content-Type: text/html")
 print()
 
-
+# Connect to the database.
+# import pymysql
+# conn = pymysql.connect(
+#     db='wafermap',
+#     port=3306,
+#     user='root',
+#     passwd='calvin',
+#     host='localhost',
+#     autocommit=True)
+# c = conn.cursor()
 
 # Get file names from command line and get a plot for each
 def parsing(filepath):
