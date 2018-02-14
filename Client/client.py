@@ -10,20 +10,20 @@ print (sys.stderr, 'connecting to %s port %s' % server_address)
 sock.connect(server_address)
 
 
-
 try:
-
     # Send data
     filename="UT_Austin_Wafermap1.txt"
     f = open(filename,'rb')
-    message = f.read(1024)
-    # message = "This is the message.  It will be repeated."
-    print (sys.stderr, 'sending "%s"' % message)
-    # sock.sendall(message)
-    sock.sendto(message.encode(),server_address)
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
+    while True:
+        message = f.read(1024)
+        if not message: break
+        # message = "This is the message.  It will be repeated."
+        print (sys.stderr, 'sending "%s"' % message)
+        # sock.sendall(message)
+        sock.sendto(message,server_address)
+        # Look for the response
+        amount_received = 0
+        amount_expected = len(message)
 
     while amount_received < amount_expected:
         data = sock.recv(1024)
