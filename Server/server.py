@@ -22,7 +22,7 @@ while True:
 
             # Receive the data in small chunks and retransmit it
             while True:
-                data = connection.recv(1024)
+                data = connection.recv(9000)
                 print (sys.stderr, 'received "%s"' % data.decode())
                 # if data:
                     # print (sys.stderr, 'sending data back to the client')
