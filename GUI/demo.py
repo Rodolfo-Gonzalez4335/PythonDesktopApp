@@ -23,8 +23,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from fileparsing import parsing
-import pymysql.cursors
-import socket
+#import pymysql.cursors
+#import socket
 #import mysql.connector
 
 
@@ -56,7 +56,7 @@ class App(QWidget):
 
         self.setLayout(v_box)
         self.setWindowTitle("PyQt5")
-        self.inputButton.clicked.connect(self.openFileNameDialog)
+        self.inputButton.clicked.connect(self.openFileNamesDialog)
         self.connectButton.clicked.connect(self.connectToServer)
         # self.openFileNameDialog()
         # self.openFileNamesDialog()
@@ -64,19 +64,14 @@ class App(QWidget):
 
         self.show()
 
-    def openFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            parsing(fileName)
-
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        files, _ = QFileDialog.getOpenFileNames(self,"QFileDialog.getOpenFileNames()", "","All Files (*);;Python Files (*.py)", options=options)
-        if files:
-            print(files)
+        filenames = QFileDialog.getOpenFileNames(self,"Upload file", "","Text files (*.txt)", options=options)
+        #f = open(filenames[0], 'r')
+        #with f:
+        #    data = f.read()
+        #    print(data)
 
     def saveFileDialog(self):
         options = QFileDialog.Options()
