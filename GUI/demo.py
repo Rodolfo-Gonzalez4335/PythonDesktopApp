@@ -47,7 +47,10 @@ class App(QWidget):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filenames = QFileDialog.getOpenFileNames(self,"Upload files", "","Text files (*.txt)", options=options)
-
+        f = open(str(filenames[0][0]), 'r')
+        for i in range(0, len(filenames[0])):
+            print(filenames[0][i])
+            
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
