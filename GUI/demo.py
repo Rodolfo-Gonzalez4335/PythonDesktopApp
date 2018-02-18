@@ -1,24 +1,3 @@
-# import sys
-# from PyQt5 import QtWidgets, QtGui
-#
-# def window():
-#
-#     app = QtWidgets.QApplication(sys.argv)
-#
-#     w = QtWidgets.QWidget()
-#     w.resize(250, 150)
-#     w.move(300, 300)
-#     w.setWindowTitle('Wafer Signature Tool')
-#
-#     l1 = QtWidgets.QLabel(w)
-#     l1.setText("Hello World")
-#     l1.move((300/4)-10,(300/4)-10)
-#     w.show()
-#     sys.exit(app.exec_())
-#
-#
-# window()
-
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QHBoxLayout
 from PyQt5.QtGui import QIcon
@@ -67,11 +46,7 @@ class App(QWidget):
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filenames = QFileDialog.getOpenFileNames(self,"Upload file", "","Text files (*.txt)", options=options)
-        #f = open(filenames[0], 'r')
-        #with f:
-        #    data = f.read()
-        #    print(data)
+        filenames = QFileDialog.getOpenFileNames(self,"Upload files", "","Text files (*.txt)", options=options)
 
     def saveFileDialog(self):
         options = QFileDialog.Options()
