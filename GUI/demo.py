@@ -2,12 +2,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from fileparsing import parsing
-#import pymysql.cursors
-#import socket
-#import mysql.connector
-
-
-
+import socket
+import sys
 
 def DisconnectToServer():
     conn.close()
@@ -42,14 +38,27 @@ class App(QWidget):
         # self.saveFileDialog()
 
         self.show()
-
+        
+    def sendFilesToServer(self, fileName):
+        try:
+            # Send data
+            f = open(fileName,'rb')
+            while True:
+                message = f.read(1024)
+                if not message:
+                    break
+                print (sys.stderr, 'sending "%s"\n' % message)
+                sock.sendto(message,server_address)
+        except:
+            print("There was an problem sending the file data.\n")
+                
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filenames = QFileDialog.getOpenFileNames(self,"Upload files", "","Text files (*.txt)", options=options)
         f = open(str(filenames[0][0]), 'r')
         for i in range(0, len(filenames[0])):
-            print(filenames[0][i])
+            self.sendFilesToServer(filenames[0][i])
             
     def saveFileDialog(self):
         options = QFileDialog.Options()
@@ -62,6 +71,14 @@ class App(QWidget):
         print ("Create Window")
 
 if __name__ == '__main__':
+    # Create a TCP/IP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Connect the socket to the port where the server is listening
+    server_address = ('localhost', 10000)
+    print (sys.stderr, 'connecting to %s port %s' % server_address)
+    sock.connect(server_address)
+    
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
