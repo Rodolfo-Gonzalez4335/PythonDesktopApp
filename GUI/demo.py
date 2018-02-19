@@ -49,15 +49,15 @@ class App(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         self.inputButton = QPushButton("Input Files")
-        self.connectButton =  QPushButton("See Server Mappings")
+        # self.connectButton =  QPushButton("See Server Mappings")
         v_box = QHBoxLayout()
         v_box.addWidget(self.inputButton)
-        v_box.addWidget(self.connectButton)
+        # v_box.addWidget(self.connectButton)
 
         self.setLayout(v_box)
         self.setWindowTitle("PyQt5")
         self.inputButton.clicked.connect(self.openFileNamesDialog)
-        self.connectButton.clicked.connect(self.connectToServer)
+        # self.connectButton.clicked.connect(self.connectToServer)
         # self.openFileNameDialog()
         # self.openFileNamesDialog()
         # self.saveFileDialog()

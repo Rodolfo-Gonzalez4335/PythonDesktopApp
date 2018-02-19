@@ -19,17 +19,23 @@ while True:
 
     try:
             print (sys.stderr, 'connection from', client_address)
-
+            i=1
+            f=open('file_'+ str(i)+".txt",'w')
+            i= i+1
             # Receive the data in small chunks and retransmit it
             while True:
                 data = connection.recv(9000)
-                print (sys.stderr, 'received "%s"' % data.decode())
+                data_decoded = data.decode()
+                print (sys.stderr, 'received "%s"' % data_decoded)
+                f.write(data_decoded)
+
                 # if data:
                     # print (sys.stderr, 'sending data back to the client')
                     # connection.sendall(data)
                 # else:
                 if not data:
                     print (sys.stderr, 'no more data from', client_address)
+                    f.close();
                     break
 
     finally:
