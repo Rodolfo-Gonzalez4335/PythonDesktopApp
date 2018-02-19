@@ -24,6 +24,10 @@ while True:
             while True:
                 data = connection.recv(9000)
                 print (sys.stderr, 'received "%s"' % data.decode())
+                #retransmit data
+
+                connection.sendall(data)
+                print(sys.stderr, 'sending data back to the client')
                 # if data:
                     # print (sys.stderr, 'sending data back to the client')
                     # connection.sendall(data)

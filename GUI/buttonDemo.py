@@ -38,7 +38,7 @@ class App(QWidget):
         # self.saveFileDialog()
 
         self.show()
-        
+
     def sendFilesToServer(self, fileName):
         try:
             # Send data
@@ -51,7 +51,7 @@ class App(QWidget):
                 sock.sendto(message,server_address)
         except:
             print("There was an problem sending the file data.\n")
-                
+
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -59,7 +59,7 @@ class App(QWidget):
         f = open(str(filenames[0][0]), 'r')
         for i in range(0, len(filenames[0])):
             self.sendFilesToServer(filenames[0][i])
-            
+
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -69,6 +69,21 @@ class App(QWidget):
 
     def connectToServer(self):
         print ("Create Window")
+        # my code , creates text file containing "return"
+        r = "return"
+        sock.sendto(r.encode('utf-8'), server_address)
+        try:
+            f = open('datareceived.txt', 'w')
+            amount_received = 0
+            amount_expected = 9000
+            while amount_received < amount_expected:
+                data = sock.recv(9000)
+                f.write(data.decode('utf-8'))
+                f.close()
+                amount_received += len(data)
+                print (sys.stderr, 'received %s' % data)
+        except:
+            print("There was a problem receiving the file data.")
 
 if __name__ == '__main__':
     # Create a TCP/IP socket
@@ -78,7 +93,7 @@ if __name__ == '__main__':
     server_address = ('localhost', 10000)
     print (sys.stderr, 'connecting to %s port %s' % server_address)
     sock.connect(server_address)
-    
+
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
