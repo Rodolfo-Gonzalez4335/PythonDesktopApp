@@ -1,5 +1,9 @@
+#Data Strucure for KLA file important all values are stored in this CLASS
+#2/21/18
+#Rodolfo Gonzalez
+
 class wafermappingsignature:
-    pass
+
     def __init__(self):
         self.filetimestamp = "NA"
         self.inpectionstationid = "NA"
@@ -44,6 +48,7 @@ class wafermappingsignature:
     def addtoDefectList(self, defectlist):
         self.defectList += defectlist
 
+    #Debugging method
     def __str__(self):
         toreturn = "TimeStamp: "+self.filetimestamp + "\nStation ID: " + self.inpectionstationid+"\nLotId: " + self.lotid+ "\nSampleSize: "+ self.samplesize + "\nStepID: "+ self.stepid + "\nDeviceID: " + self.deviceid + "\nWaferId"    + self.waferid + "\nDefectList: \n"
         i=0;

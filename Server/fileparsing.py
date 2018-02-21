@@ -10,6 +10,8 @@ from wafermappingsignature import wafermappingsignature
 import sys
 
 class fileparsing:
+
+
     def __init__(self, filename):
         self.timestamp = "NA"
         self.inspectionstationid = "NA"
@@ -51,11 +53,11 @@ class fileparsing:
                 elif 'WaferID' in line:
                     waferid = line[8:-1]
                     self.wafermap.addWaferID(waferid)
-                elif 'DefectList' in line:
+                elif 'DefectList' in line:#Function used since multiple parsing is needed
                     self.parseDefectList()
-                elif 'SummarySpec' in line:
+                elif 'SummarySpec' in line:#Debugging method
                     print("IN SUMARY SPEC")
-                elif 'SummaryList'in line:
+                elif 'SummaryList'in line:#This case needs work
                     line = self.fileDescriptor.readline()
                     self.defectdensity = self.getDefectDensity(line)
                     self.wafermap.addDefectDensity(self.defectdensity)
