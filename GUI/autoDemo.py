@@ -1,6 +1,7 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QHBoxLayout
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout
+from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtCore import QDir
 from fileparsing import parsing
 import socket
 import sys
@@ -20,26 +21,79 @@ class App(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        
+        label = QLabel(self)
+        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-639x426.jpg')
+        label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+        
+        
+        grid = QGridLayout()
+        hbox = QHBoxLayout()
+        hbox1 = QHBoxLayout()
+        hbox2 = QHBoxLayout()
+        hbox3 = QHBoxLayout()
+        vbox = QVBoxLayout()
+        #self.setGeometry(self.left, self.top, self.width, self.height)
+        
+        self.title = QLabel("<h1>Wafer Map Signature Tool</h1>", self)
+        self.line = QLabel("<b>_______________________________________________________________________________________________</b>", self)
+        self.fileName = QLabel("<b>File Name: </b>", self)
+        self.txtType = QLabel("<b>.txt files only</b>", self)
+        self.fileNameBox = QLineEdit(self)
+        self.fileNameBox.setReadOnly(True)
+        self.fileNameBox.setFixedWidth(200)
+        
+        
+        
+#        hbox.addWidget(title)
+#        hbox1.addWidget(self.HLine())
+#        hbox2.addWidget(fileName)
+#        hbox2.addWidget(fileNameBox)
+#        
 
-        self.inputButton = QPushButton("Input Files")
-        self.connectButton =  QPushButton("See Server Mappings")
-        v_box = QHBoxLayout()
-        v_box.addWidget(self.inputButton)
-        v_box.addWidget(self.connectButton)
+        self.inputButton = QPushButton("Browse", self)
+        #self.connectButton =  QPushButton("See Server Mappings", self)
+        self.uploadButton = QPushButton("Upload", self)
+        
+#        hbox2.addWidget(self.inputButton)
+#        hbox3.addWidget(blank)
+#        hbox3.addWidget(txtType)
+#        hbox3.addWidget(self.uploadButton)
+#        
+#        vbox.addLayout(hbox)
+#        vbox.addLayout(hbox1)
+#        vbox.addLayout(hbox2)
+#        vbox.addLayout(hbox3)
 
-        self.setLayout(v_box)
-        self.setWindowTitle("PyQt5")
+        self.title.move(15,10)
+        self.line.move(10, 25)
+        
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(110, 80)
+        self.inputButton.move(320, 75)
+        self.txtType.move(110, 105)
+        self.uploadButton.move(320, 100)
+        
+
+#self.setLayout(vbox)
+        self.setWindowTitle("Senior Project Tool")
         self.inputButton.clicked.connect(self.openFileNamesDialog)
-        self.connectButton.clicked.connect(self.connectToServer)
-        # self.openFileNameDialog()
-        # self.openFileNamesDialog()
-        # self.saveFileDialog()
-
+        self.uploadButton.clicked.connect(self.uploadFunc)
+        #self.connectButton.clicked.connect(self.connectToServer)
+        
+        #self.saveFileDialog()
+        #self.setFixedSize(570, 400)
         self.show()
+    
+    def HLine(self):
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        return toto
 
     def sendFilesToServer(self, fileName):
+        self.fileNameBox.setText("")
         try:
             # Send data
             f = open(fileName,'rb')
@@ -67,10 +121,17 @@ class App(QWidget):
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filenames = QFileDialog.getOpenFileNames(self,"Upload files", "","Text files (*.txt)", options=options)
-        f = open(str(filenames[0][0]), 'r')
-        for i in range(0, len(filenames[0])):
-            self.sendFilesToServer(filenames[0][i])
+        self.filenames = QFileDialog.getOpenFileNames(self,"Upload Files", "","Text files (*.txt)", options=options)
+        filename, _ = self.filenames
+        self.fileNameBox.setText(str(filename))
+#        f = open(str(filenames[0][0]), 'r')
+#        for i in range(0, len(filenames[0])):
+#            self.sendFilesToServer(filenames[0][i])
+
+    def uploadFunc(self):
+        f = open(str(self.filenames[0][0]), 'r')
+        for i in range(0, len(self.filenames[0])):
+            self.sendFilesToServer(self.filenames[0][i])
 
     def saveFileDialog(self):
         options = QFileDialog.Options()
