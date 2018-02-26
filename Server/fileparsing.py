@@ -25,7 +25,7 @@ class fileparsing:
         self.defectdensity = "NA"
         self.wafermap = wafermappingsignature()
 
-    def parse(self, path):
+    def parse(self):
         try:
             self.fileDescriptor = open(self.filename,"r")
         except OSError:
@@ -119,4 +119,3 @@ class fileparsing:
 
 
 idk = fileparsing("UT_Austin_Wafermap1.txt");
-idk.parse("UT_Austin_Wafermap1.txt");
