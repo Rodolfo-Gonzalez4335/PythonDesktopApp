@@ -91,3 +91,23 @@ SummarySpec 5 TESTNO NDEFECT DEFDENSITY NDIE NDEFDIE ;
 SummaryList
  1 72 0.505263 4 4;
 EndOfFile;
+Name: Chevrolet 
+Power: 1995 
+Toughness: 10000 
+
+
+Name: Chevrolet 
+Power: 2000 
+Toughness: 12000 
+
+
+Make: Chevrolet 
+Year: 1995 
+Miles: 1000 
+
+
+Make: Mazda 
+Year: 2007 
+Miles: 15000 
+
+
