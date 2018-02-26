@@ -1,11 +1,15 @@
 import socket
+from socket import gethostbyname
 import sys
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = ('localhost', 10000)
+# host="127.0.0.1"
+host = gethostbyname( '0.0.0.0' )
+# host = "10.145.103.233"
+server_address = (host, 10000)
 print (sys.stderr, 'starting up on %s port %s' % server_address)
 sock.bind(server_address)
 
