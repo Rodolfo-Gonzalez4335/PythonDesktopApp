@@ -26,7 +26,7 @@ class App(QWidget):
         
         #App components
         self.title = QLabel("<h1>Wafer Map Signature Tool</h1>", self)
-        self.line = QLabel("<b>_______________________________________________________________________________________________</b>", self)
+        self.line = QLabel("<b>_______________________________________________________________________________________________________</b>", self)
         self.fileName = QLabel("<b>File Name: </b>", self)
         self.txtType = QLabel("<b>.txt files only</b>", self)
         self.fileNameBox = QLineEdit(self)
@@ -40,7 +40,7 @@ class App(QWidget):
         
         #Title placement
         self.title.move(15,10)
-        self.line.move(10, 25)
+        self.line.move(10, 30)
         
         #Components placement
         self.fileName.move(25, 80)
@@ -54,7 +54,7 @@ class App(QWidget):
         self.uploadButton.clicked.connect(self.uploadFunc)
         #self.connectButton.clicked.connect(self.connectToServer)
         
-        #self.setFixedSize(570, 400)
+        self.setFixedSize(pixmap.width(), pixmap.height())
         
         #Layout
         self.setWindowTitle("Senior Project Tool")
@@ -73,17 +73,18 @@ class App(QWidget):
                 sock.sendto(message,server_address)
         except:
             print("There was an problem sending the file data.\n")
-        try:
-            f = open('datareceived.txt', 'w')
-            while 1:
-                data = sock.recv(4096)
-                if not data: break
-                f.write(data.decode('utf-8'))
-                f.close()
-                amount_received += len(data)
-                print (sys.stderr, 'received %s' % data)
-        except:
-            print("There was a problem sending the file data.")
+#        with open('datareceived.txt', 'w') as f:
+#            try:
+#                while 1:
+#                    data = sock.recv(1024)
+#                    print (sys.stderr, 'received %s' % data)
+#                    if not data:
+#                        break
+#                    f.write(data)
+#                    amount_received += len(data)
+#            except:
+#                print("There was a problem sending the file data.")
+#        f.close()
 
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect the socket to the port where the server is listening
-    server_address = ('localhost', 10000)
+    server_address = ('10.145.220.247', 10000)
     print (sys.stderr, 'connecting to %s port %s' % server_address)
     sock.connect(server_address)
 
