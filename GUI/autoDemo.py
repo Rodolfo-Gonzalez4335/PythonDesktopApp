@@ -4,7 +4,6 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir
 from fileparsing import parsing
 import socket
-import sys
 
 
 
