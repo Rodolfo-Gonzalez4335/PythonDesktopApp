@@ -101,26 +101,12 @@ class App(QWidget):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
         # Connect the socket to the port where the server is listening
-        self.server_address = ('10.145.220.247', 10000)
+        self.server_address = ('10.147.76.70', 10000)
         print (sys.stderr, 'connecting to %s port %s' % self.server_address)
         self.sock.connect(self.server_address)
 
     def printReport(self):
-        self.ConnectToServer()
-        print ("Create Window")
-        # my code , creates text file containing "return"
-        r = "return"
-        self.sock.sendto(r.encode('utf-8'), server_address)
-        try:
-            f = open('datareceived.txt', 'w')
-            while 1:
-                data = self.sock.recv(1024)
-                if not data: break
-                f.write(data.decode('utf-8'))
-                f.close()
-                print (sys.stderr, 'received %s' % data)
-        except:
-            print("There was a problem receiving the file data.")
+        self.sock.sendto("Send Report", self.server_address)
 
 if __name__ == '__main__':
 #    # Create a TCP/IP socket
