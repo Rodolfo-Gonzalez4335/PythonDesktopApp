@@ -106,16 +106,13 @@ class App(QWidget):
         self.sock.connect(self.server_address)
 
     def printReport(self):
-        self.sock.sendto("Send Report", self.server_address)
+        self.ConnectToServer()
+        self.sock.sendto("Send Report".encode('utf-8'), self.server_address)
+        data = self.sock.recv(1024)
+        print(data.decode())
+        self.DisconnectToServer()
 
 if __name__ == '__main__':
-#    # Create a TCP/IP socket
-#    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#
-#    # Connect the socket to the port where the server is listening
-#    server_address = ('10.145.220.247', 10000)
-#    print (sys.stderr, 'connecting to %s port %s' % server_address)
-#    sock.connect(server_address)
 
     app = QApplication(sys.argv)
     ex = App()
