@@ -8,11 +8,12 @@
 import cgitb
 from wafermappingsignature import wafermappingsignature
 import sys
+import os
 
 class fileparsing:
 
 
-    def __init__(self, filename):
+    def __init__(self):
         self.timestamp = "NA"
         self.inspectionstationid = "NA"
         self.lotid = "NA"
@@ -20,60 +21,56 @@ class fileparsing:
         self.stepid ="NA"
         self.deviceid = "NA"
         self.waferid = "NA"
-        self.filename = filename
         self.lineOfNums = []
         self.defectdensity = "NA"
         self.wafermap = wafermappingsignature()
 
     def parse(self):
-        try:
-            self.fileDescriptor = open(self.filename,"r")
-        except OSError:
-            print ("File could not be opened")
-        try:
-            for line in self.fileDescriptor:
-                if 'File Timestamp' in line:
-                    timestamp = line[14:-1]
-                    self.wafermap.addTimeStamp(timestamp)
-                elif 'InspectionStationID' in line:
-                    inspectionstationid = line[20:-1]
-                    self.wafermap.addInpectionStationID(inspectionstationid)
-                elif 'LotID' in line:
-                    lotid = line[6:-1]
-                    self.wafermap.addLotID(lotid)
-                elif 'SampleSize' in line:
-                    samplesize = line[11:-1]
-                    self.wafermap.addSampleSize(samplesize)
-                elif 'StepID' in line:
-                    stepid = line[7:-1]
-                    self.wafermap.addStepID(stepid)
-                elif 'DeviceID' in line:
-                    deviceid = line[9:-1]
-                    self.wafermap.addDeviceID(deviceid)
-                elif 'WaferID' in line:
-                    waferid = line[8:-1]
-                    self.wafermap.addWaferID(waferid)
-                elif 'DefectList' in line:#Function used since multiple parsing is needed
-                    self.parseDefectList()
-                elif 'SummarySpec' in line:#Debugging method
-                    print("IN SUMARY SPEC")
-                elif 'SummaryList'in line:#This case needs work
-                    line = self.fileDescriptor.readline()
-                    self.defectdensity = self.getDefectDensity(line)
-                    self.wafermap.addDefectDensity(self.defectdensity)
-
-        finally:
-            print (self.wafermap)
-            self.fileDescriptor.close()
+        i = 1
+        dir_path = os.path.join(os.getcwd(), "input_files")
+        for filename in os.listdir(dir_path):
+            if filename == ".DS_Store":
+                break
+            try:
+                self.fileDescriptor = open(os.path.join(dir_path, filename), "r")
+            except OSError:
+                print ("File could not be opened")
+            try:
+                for line in self.fileDescriptor:
+                    if 'File Timestamp' in line:
+                        timestamp = line[14:-1]
+                        self.wafermap.addTimeStamp(timestamp)
+                    elif 'InspectionStationID' in line:
+                        inspectionstationid = line[20:-1]
+                        self.wafermap.addInpectionStationID(inspectionstationid)
+                    elif 'LotID' in line:
+                        lotid = line[6:-1]
+                        self.wafermap.addLotID(lotid)
+                    elif 'SampleSize' in line:
+                        samplesize = line[11:-1]
+                        self.wafermap.addSampleSize(samplesize)
+                    elif 'StepID' in line:
+                        stepid = line[7:-1]
+                        self.wafermap.addStepID(stepid)
+                    elif 'DeviceID' in line:
+                        deviceid = line[9:-1]
+                        self.wafermap.addDeviceID(deviceid)
+                    elif 'WaferID' in line:
+                        waferid = line[8:-1]
+                        self.wafermap.addWaferID(waferid)
+                    elif 'DefectList' in line: # Function used since multiple parsing is needed
+                        self.parseDefectList()
+                    elif 'SummaryList'in line: # This case needs work
+                        line = self.fileDescriptor.readline()
+                        self.defectdensity = self.getDefectDensity(line)
+                        self.wafermap.addDefectDensity(self.defectdensity)
+            finally:
+                print (self.wafermap)
+                self.fileDescriptor.close()
 
     def getDefectDensity(self, line):
-        sumarylist = []
-        linelist = line.strip(' ').split(' ')
-        i=0
-        for num in linelist:
-            if i==2:
-                return (float(num))
-            i+=1;
+        list = line.strip(' ').split(' ')
+        return float(list[2])
 
     def parseDefectList(self):
         index=0;
@@ -114,8 +111,3 @@ class fileparsing:
             self.wafermap.addToList(self.lineOfNums)
             index = index+1
         # print(self.wafermap)
-
-
-
-
-idk = fileparsing("UT_Austin_Wafermap1.txt");

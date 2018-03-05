@@ -20,8 +20,8 @@ class App(QWidget):
         pixmap = QPixmap('yellow-pastel-paint-texture-1638434-639x426.jpg')
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
-        
-        
+
+
         #App components
         self.title = QLabel("<h1>Wafer Map Signature Tool</h1>", self)
         self.line = QLabel("<b>_______________________________________________________________________________________________________</b>", self)
@@ -30,16 +30,16 @@ class App(QWidget):
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(270)
-        
+
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
         self.connectButton =  QPushButton("Print Report", self)
         self.uploadButton = QPushButton("Upload", self)
-        
+
         #Title placement
         self.title.move(15,10)
         self.line.move(10, 30)
-        
+
         #Components placement
         self.fileName.move(25, 80)
         self.fileNameBox.move(110, 80)
@@ -47,14 +47,14 @@ class App(QWidget):
         self.txtType.move(110, 105)
         self.uploadButton.move(390, 100)
         self.connectButton.move(40, 300)
-        
+
         #Buttons Action
         self.inputButton.clicked.connect(self.openFileNamesDialog)
         self.uploadButton.clicked.connect(self.uploadFunc)
         self.connectButton.clicked.connect(self.printReport)
-        
+
         self.setFixedSize(pixmap.width(), pixmap.height())
-        
+
         #Layout
         self.setWindowTitle("Senior Project Tool")
         self.show()
@@ -99,9 +99,10 @@ class App(QWidget):
     def ConnectToServer(self):
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
+
         # Connect the socket to the port where the server is listening
-        self.server_address = ('10.147.76.70', 10000)
+        # '10.147.76.70'
+        self.server_address = ('localhost', 10000)
         print (sys.stderr, 'connecting to %s port %s' % self.server_address)
         self.sock.connect(self.server_address)
 

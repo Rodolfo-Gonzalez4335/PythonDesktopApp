@@ -2,12 +2,14 @@ import socket
 from socket import gethostbyname
 import sys
 from fileparsing import fileparsing
+import os
 
 
 class Server:
     def __init__(self):
-        self.host = gethostbyname( '0.0.0.0' )
-        self.server_address = (self.host, 10000)
+        #self.host = gethostbyname( '0.0.0.0' )
+        #self.host
+        self.server_address = ('localhost', 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -23,7 +25,9 @@ class Server:
 
             try:
                 i=1
-                f=open('file_'+ str(i)+".txt",'w')
+                # Open file to input_files directory in Server
+                dir_path = os.path.join(os.getcwd(), "input_files")
+                f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                 i= i+1
                 # Receive the data in small chunks and retransmit it
                 while True:
@@ -36,12 +40,12 @@ class Server:
                         if not data:
                             print (sys.stderr, 'empty data from client', client_address)
                             f.close();
-                            # idk = fileparsing("file_"+str(i))
-                            # idk.parse();
+                            file = fileparsing()
+                            file.parse();
                             break
                         if f.closed and data_decoded!="":
                             print ("!!!!!!!!f.close"+ data_decoded)
-                            f=open('file_'+ str(i)+".txt",'w')
+                            f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                             i= i+1
                         if "EndOfFile" in data_decoded:
                             idk = data_decoded.split("EndOfFile;")
@@ -50,7 +54,7 @@ class Server:
                             if len(idk)==2:
                                 if idk[1] and data_decoded!="":
                                     print ("~~~~~~~~~~"+idk[1]+"~~~~~~~~~~")
-                                    f=open('file_'+ str(i)+".txt",'w')
+                                    f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                                     i= i+1
                                     f.write(idk[1])
                         else:
