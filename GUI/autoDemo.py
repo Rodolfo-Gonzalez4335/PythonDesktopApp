@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtCore import QDir
+from PyQt5.QtCore import QDir, Qt
 from fileparsing import parsing
 import socket
 
@@ -17,16 +17,16 @@ class App(QWidget):
     def initUI(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-639x426.jpg')
+        pixmap = QPixmap('technology-background-1632715-1279x854.jpg')
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
 
 
         #App components
-        self.title = QLabel("<h1>Wafer Map Signature Tool</h1>", self)
-        self.line = QLabel("<b>_______________________________________________________________________________________________________</b>", self)
-        self.fileName = QLabel("<b>File Name: </b>", self)
-        self.txtType = QLabel("<b>.txt files only</b>", self)
+        self.title = QLabel("<h1><font color='white'>\t\t\t Wafer Map Signature Tool</font></h1>", self)
+        self.line = QLabel("<b><font color = 'white'>_______________________________________________________________________________________________________________________________________________________________________________________________________________</font></b>", self)
+        self.fileName = QLabel("<b><font color='white'>File Name: </font></b>", self)
+        self.txtType = QLabel("<b><font color='white'>.txt files only </font></b>", self)
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(270)
@@ -38,7 +38,7 @@ class App(QWidget):
 
         #Title placement
         self.title.move(15,10)
-        self.line.move(10, 30)
+        self.line.move(10, 35)
 
         #Components placement
         self.fileName.move(25, 80)
