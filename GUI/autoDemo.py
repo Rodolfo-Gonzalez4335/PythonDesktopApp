@@ -29,7 +29,7 @@ class App(QWidget):
         self.txtType = QLabel("<b><font color='white'>.txt files only </font></b>", self)
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
-        self.fileNameBox.setFixedWidth(270)
+        self.fileNameBox.setFixedWidth(300)
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
@@ -42,10 +42,10 @@ class App(QWidget):
 
         #Components placement
         self.fileName.move(25, 80)
-        self.fileNameBox.move(110, 80)
-        self.inputButton.move(390, 75)
-        self.txtType.move(110, 105)
-        self.uploadButton.move(390, 100)
+        self.fileNameBox.move(120, 80)
+        self.inputButton.move(430, 75)
+        self.txtType.move(120, 110)
+        self.uploadButton.move(430, 110)
         self.connectButton.move(40, 300)
 
         #Buttons Action
