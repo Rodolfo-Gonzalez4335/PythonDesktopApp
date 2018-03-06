@@ -53,7 +53,7 @@ class App(QWidget):
         self.uploadButton.clicked.connect(self.uploadFunc)
         self.connectButton.clicked.connect(self.printReport)
 
-        self.setFixedSize(pixmap.width(), pixmap.height())
+        self.setFixedSize(639, 426)
 
         #Layout
         self.setWindowTitle("Senior Project Tool")
