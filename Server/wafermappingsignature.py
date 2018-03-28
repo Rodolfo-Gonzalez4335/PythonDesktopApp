@@ -9,11 +9,13 @@ class wafermappingsignature:
         self.inpectionstationid = "NA"
         self.lotid = "NA"
         self.samplesize = "NA"
+        self.setupID = "NA"
         self.stepid = "NA"
         self.deviceid = "NA"
         self.waferid = "NA"
         self.defectList = []
         self.defectdensity = "NA"
+        self.classification = "NA"
 
     def addTimeStamp(self,timestamp):
         self.filetimestamp = timestamp
@@ -48,14 +50,20 @@ class wafermappingsignature:
     def addtoDefectList(self, defectlist):
         self.defectList += defectlist
 
+    def addClassfication(self, classification):
+        self.classification = classification
+
+    def addSetupID(self,setupid):
+        self.setupID = setupid
     #Debugging method
     def __str__(self):
-        toreturn = "TimeStamp: "+self.filetimestamp + "\nStation ID: " + self.inpectionstationid+"\nLotId: " + self.lotid+ "\nSampleSize: "+ self.samplesize + "\nStepID: "+ self.stepid + "\nDeviceID: " + self.deviceid + "\nWaferId"    + self.waferid + "\nDefectList: \n"
-        i=0;
-
-        for x in range(len(self.defectList)):
-            toreturn = toreturn + str(self.defectList[x])
-            toreturn=toreturn+"\n"
-            i = i+1;
-        toreturn = toreturn +"\n"+ str(self.defectdensity)
+        toreturn = "WaferId"+ self.waferid+"\nClassification:"+self.classification+"\n========================================"+"\nLotId: " + self.lotid+ "\nStepID: "+ self.stepid+"\nSetupID"+self.setupID+ "\nDeviceID: " + self.deviceid +"\nStation ID: " + self.inpectionstationid+ "\nSampleSize: "+ self.samplesize+"\nTimeStamp: "+self.filetimestamp 
+        # toreturn = self.timestamp+"\t\t\t"+self.inpectionstationid+"\t\t\t"+self.lotid+"\t\t\t"+self.samplesize+"\t\t\t"SampleSize\t\t\tStepID\t\t\tDeviceID\t\t\tWaferID
+        # i=0;
+        #
+        # for x in range(len(self.defectList)):
+        #     toreturn = toreturn + str(self.defectList[x])
+        #     toreturn=toreturn+"\n"
+        #     i = i+1;
+        # toreturn = toreturn +"\n"+ str(self.defectdensity)
         return toreturn
