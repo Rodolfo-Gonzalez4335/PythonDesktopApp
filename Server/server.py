@@ -15,7 +15,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 
 class Server:
-    
+
     def __init__(self):
         # self.training()
         self.host = gethostbyname( '0.0.0.0' )
@@ -143,7 +143,7 @@ class Server:
                                 if first_and_second_file[1]!="":
                                     f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                                     i= i+1
-                                    f.write(idk[1])
+                                    f.write(first_and_second_file[1])
                         else:
                             f.write(data_decoded)
 

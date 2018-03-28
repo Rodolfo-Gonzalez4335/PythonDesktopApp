@@ -105,7 +105,7 @@ class App(QWidget):
 
         # Connect the socket to the port where the server is listening
         # '10.147.76.70'
-        self.server_address = ('10.145.31.19', 10000)
+        self.server_address = ("localhost", 10000)
         print (sys.stderr, 'connecting to %s port %s' % self.server_address)
         self.sock.connect(self.server_address)
 
