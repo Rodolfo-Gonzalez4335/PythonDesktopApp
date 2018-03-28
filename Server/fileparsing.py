@@ -14,16 +14,10 @@ class fileparsing:
 
 
     def __init__(self):
-        self.timestamp = "NA"
-        self.inspectionstationid = "NA"
-        self.lotid = "NA"
-        self.samplesize = "NA"
-        self.stepid ="NA"
-        self.deviceid = "NA"
-        self.waferid = "NA"
         self.lineOfNums = []
         self.defectdensity = "NA"
-        self.wafermap = wafermappingsignature()
+        self.wafermappings = []
+        self.wafer = wafermappingsignature()
 
     def parse(self):
         i = 1
@@ -36,37 +30,42 @@ class fileparsing:
             except OSError:
                 print ("File could not be opened")
             try:
+                self.wafer = wafermappingsignature()
                 for line in self.fileDescriptor:
                     if 'File Timestamp' in line:
                         timestamp = line[14:-1]
-                        self.wafermap.addTimeStamp(timestamp)
+                        self.wafer.addTimeStamp(timestamp)
                     elif 'InspectionStationID' in line:
                         inspectionstationid = line[20:-1]
-                        self.wafermap.addInpectionStationID(inspectionstationid)
+                        self.wafer.addInpectionStationID(inspectionstationid)
                     elif 'LotID' in line:
                         lotid = line[6:-1]
-                        self.wafermap.addLotID(lotid)
+                        self.wafer.addLotID(lotid)
                     elif 'SampleSize' in line:
                         samplesize = line[11:-1]
-                        self.wafermap.addSampleSize(samplesize)
+                        self.wafer.addSampleSize(samplesize)
+                    elif 'SetupID' in line:
+                        setupID = line[8:-1]
+                        self.wafer.addSetupID(setupID)
                     elif 'StepID' in line:
                         stepid = line[7:-1]
-                        self.wafermap.addStepID(stepid)
+                        self.wafer.addStepID(stepid)
                     elif 'DeviceID' in line:
                         deviceid = line[9:-1]
-                        self.wafermap.addDeviceID(deviceid)
+                        self.wafer.addDeviceID(deviceid)
                     elif 'WaferID' in line:
                         waferid = line[8:-1]
-                        self.wafermap.addWaferID(waferid)
+                        self.wafer.addWaferID(waferid)
                     elif 'DefectList' in line: # Function used since multiple parsing is needed
                         self.parseDefectList()
                     elif 'SummaryList'in line: # This case needs work
                         line = self.fileDescriptor.readline()
                         self.defectdensity = self.getDefectDensity(line)
-                        self.wafermap.addDefectDensity(self.defectdensity)
+                        self.wafer.addDefectDensity(self.defectdensity)
             finally:
-                print (self.wafermap)
+
                 self.fileDescriptor.close()
+                self.wafermappings.append(self.wafer)
 
     def getDefectDensity(self, line):
         list = line.strip(' ').split(' ')
@@ -108,6 +107,20 @@ class fileparsing:
                     pass
                 i+=1
                 #Line of code used for end of defect list fileparsing
-            self.wafermap.addToList(self.lineOfNums)
+            self.wafer.addToList(self.lineOfNums)
             index = index+1
         # print(self.wafermap)
+    def saveWaferMappings(self):
+        dir_path = os.path.join(os.getcwd(), "Report")
+        i=0
+        for wafer in self.wafermappings:
+            i+=1
+            f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+            # f.write("Timestamp\t\t\tInpectionId\t\t\tLotID\t\t\tSampleSize\t\t\tStepID\t\t\tDeviceID\t\t\tWaferID\n")
+            f.write(str(wafer))
+
+    def addClassfication(self,index,classification):
+        if len(self.wafermappings)<index:
+            print("INDEX IS OUT OF BOUNDS!")
+        else:
+            self.wafermappings[index].addClassfication(classification)
