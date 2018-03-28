@@ -119,10 +119,10 @@ class App(QWidget):
     def trainMachine(self):
         self.ConnectToServer()
         self.sock.sendto("Training mode".encode('utf-8'), self.server_address)
-        self.fileNameBox.setText("")
-        f = open(str(self.filenames[0][0]), 'r')
-        for i in range(0, len(self.filenames[0])):
-            sendFilesToServer(self.filenames[0][i])
+#        self.fileNameBox.setText("")
+#        f = open(str(self.filenames[0][0]), 'r')
+#        for i in range(0, len(self.filenames[0])):
+#            sendFilesToServer(self.filenames[0][i])
         self.DisconnectToServer()
 
 if __name__ == '__main__':
