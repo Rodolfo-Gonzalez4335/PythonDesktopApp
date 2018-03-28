@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt
-from fileparsing import parsing
+#from fileparsing import parsing
 import socket
 
 
@@ -35,6 +35,7 @@ class App(QWidget):
         self.inputButton = QPushButton("Browse", self)
         self.connectButton =  QPushButton("Print Report", self)
         self.uploadButton = QPushButton("Upload", self)
+        self.trainButton = QPushButton("Train", self)
 
         #Title placement
         self.title.move(15,10)
@@ -47,11 +48,13 @@ class App(QWidget):
         self.txtType.move(120, 110)
         self.uploadButton.move(430, 110)
         self.connectButton.move(40, 300)
+        self.trainButton.move(200, 300)
 
         #Buttons Action
         self.inputButton.clicked.connect(self.openFileNamesDialog)
         self.uploadButton.clicked.connect(self.uploadFunc)
         self.connectButton.clicked.connect(self.printReport)
+        self.trainButton.clicked.connect(self.trainMachine)
 
         self.setFixedSize(639, 426)
 
@@ -102,7 +105,7 @@ class App(QWidget):
 
         # Connect the socket to the port where the server is listening
         # '10.147.76.70'
-        self.server_address = ('localhost', 10000)
+        self.server_address = ('10.145.31.19', 10000)
         print (sys.stderr, 'connecting to %s port %s' % self.server_address)
         self.sock.connect(self.server_address)
 
@@ -111,6 +114,15 @@ class App(QWidget):
         self.sock.sendto("Send Report".encode('utf-8'), self.server_address)
         data = self.sock.recv(1024)
         print(data.decode())
+        self.DisconnectToServer()
+
+    def trainMachine(self):
+        self.ConnectToServer()
+        self.sock.sendto("Training mode".encode('utf-8'), self.server_address)
+        self.fileNameBox.setText("")
+        f = open(str(self.filenames[0][0]), 'r')
+        for i in range(0, len(self.filenames[0])):
+            sendFilesToServer(self.filenames[0][i])
         self.DisconnectToServer()
 
 if __name__ == '__main__':
