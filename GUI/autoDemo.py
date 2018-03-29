@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt
@@ -112,8 +113,25 @@ class App(QWidget):
     def printReport(self):
         self.ConnectToServer()
         self.sock.sendto("Send Report".encode('utf-8'), self.server_address)
-        data = self.sock.recv(1024)
-        print(data.decode())
+        dir_path = os.path.join(os.getcwd(), "Report_files")
+        i = 1
+        f=open(os.path.join(dir_path, 'received_file'+ str(i)+".txt"),'w')
+        i=i+1
+        while True:
+            data = self.sock.recv(1024)
+            data_decoded = data.decode()
+            if not data:
+                f.close()
+                break
+            if f.closed and data_decoded != "":
+                f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
+                i = i+1
+            if "EOF" in data_decoded:
+                separateFile = data_decoded.split("EOF")
+                f.write(separateFile[0])
+                f.close()
+            else:
+                f.write(data_decoded)
         self.DisconnectToServer()
 
     def trainMachine(self):
@@ -123,6 +141,8 @@ class App(QWidget):
 #        f = open(str(self.filenames[0][0]), 'r')
 #        for i in range(0, len(self.filenames[0])):
 #            sendFilesToServer(self.filenames[0][i])
+        data = self.sock.recv(1024)
+        print(data.decode())
         self.DisconnectToServer()
 
 if __name__ == '__main__':

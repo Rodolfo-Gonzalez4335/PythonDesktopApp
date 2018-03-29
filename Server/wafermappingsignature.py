@@ -57,7 +57,7 @@ class wafermappingsignature:
         self.setupID = setupid
     #Debugging method
     def __str__(self):
-        toreturn = "WaferId"+ self.waferid+"\nClassification:"+self.classification+"\n========================================"+"\nLotId: " + self.lotid+ "\nStepID: "+ self.stepid+"\nSetupID"+self.setupID+ "\nDeviceID: " + self.deviceid +"\nStation ID: " + self.inpectionstationid+ "\nSampleSize: "+ self.samplesize+"\nTimeStamp: "+self.filetimestamp 
+        toreturn = "WaferId"+ self.waferid+"\nClassification: "+self.classification+"\n========================================"+"\nLotId: " + self.lotid+ "\nStepID: "+ self.stepid+"\nSetupID"+self.setupID+ "\nDeviceID: " + self.deviceid +"\nStation ID: " + self.inpectionstationid+ "\nSampleSize: "+ self.samplesize+"\nTimeStamp: "+self.filetimestamp+"\nEOF"
         # toreturn = self.timestamp+"\t\t\t"+self.inpectionstationid+"\t\t\t"+self.lotid+"\t\t\t"+self.samplesize+"\t\t\t"SampleSize\t\t\tStepID\t\t\tDeviceID\t\t\tWaferID
         # i=0;
         #
