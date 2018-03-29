@@ -20,52 +20,54 @@ class fileparsing:
         self.wafer = wafermappingsignature()
 
     def parse(self):
+        print("got in")
         i = 1
         dir_path = os.path.join(os.getcwd(), "input_files")
         for filename in os.listdir(dir_path):
-            if filename == ".DS_Store":
-                break
-            try:
-                self.fileDescriptor = open(os.path.join(dir_path, filename), "r")
-            except OSError:
-                print ("File could not be opened")
-            try:
-                self.wafer = wafermappingsignature()
-                for line in self.fileDescriptor:
-                    if 'File Timestamp' in line:
-                        timestamp = line[14:-1]
-                        self.wafer.addTimeStamp(timestamp)
-                    elif 'InspectionStationID' in line:
-                        inspectionstationid = line[20:-1]
-                        self.wafer.addInpectionStationID(inspectionstationid)
-                    elif 'LotID' in line:
-                        lotid = line[6:-1]
-                        self.wafer.addLotID(lotid)
-                    elif 'SampleSize' in line:
-                        samplesize = line[11:-1]
-                        self.wafer.addSampleSize(samplesize)
-                    elif 'SetupID' in line:
-                        setupID = line[8:-1]
-                        self.wafer.addSetupID(setupID)
-                    elif 'StepID' in line:
-                        stepid = line[7:-1]
-                        self.wafer.addStepID(stepid)
-                    elif 'DeviceID' in line:
-                        deviceid = line[9:-1]
-                        self.wafer.addDeviceID(deviceid)
-                    elif 'WaferID' in line:
-                        waferid = line[8:-1]
-                        self.wafer.addWaferID(waferid)
-                    elif 'DefectList' in line: # Function used since multiple parsing is needed
-                        self.parseDefectList()
-                    elif 'SummaryList'in line: # This case needs work
-                        line = self.fileDescriptor.readline()
-                        self.defectdensity = self.getDefectDensity(line)
-                        self.wafer.addDefectDensity(self.defectdensity)
-            finally:
-
-                self.fileDescriptor.close()
-                self.wafermappings.append(self.wafer)
+            if filename.endswith(".txt"):
+                try:
+                    self.fileDescriptor = open(os.path.join(dir_path, filename), "r")
+                    print(dir_path + " " + filename)
+                except OSError:
+                    print ("File could not be opened")
+                try:
+                    self.wafer = wafermappingsignature()
+                    for line in self.fileDescriptor:
+                        if 'File Timestamp' in line:
+                            timestamp = line[14:-1]
+                            self.wafer.addTimeStamp(timestamp)
+                        elif 'InspectionStationID' in line:
+                            inspectionstationid = line[20:-1]
+                            self.wafer.addInpectionStationID(inspectionstationid)
+                        elif 'LotID' in line:
+                            lotid = line[6:-1]
+                            self.wafer.addLotID(lotid)
+                        elif 'SampleSize' in line:
+                            samplesize = line[11:-1]
+                            self.wafer.addSampleSize(samplesize)
+                        elif 'SetupID' in line:
+                            setupID = line[8:-1]
+                            self.wafer.addSetupID(setupID)
+                        elif 'StepID' in line:
+                            stepid = line[7:-1]
+                            self.wafer.addStepID(stepid)
+                        elif 'DeviceID' in line:
+                            deviceid = line[9:-1]
+                            self.wafer.addDeviceID(deviceid)
+                        elif 'WaferID' in line:
+                            waferid = line[8:-1]
+                            self.wafer.addWaferID(waferid)
+                        elif 'DefectList' in line: # Function used since multiple parsing is needed
+                            self.parseDefectList()
+                        elif 'SummaryList'in line: # This case needs work
+                            line = self.fileDescriptor.readline()
+                            self.defectdensity = self.getDefectDensity(line)
+                            self.wafer.addDefectDensity(self.defectdensity)
+                finally:
+                    print(self.wafer)
+                    self.fileDescriptor.close()
+                    self.wafermappings.append(self.wafer)
+                    print(self.wafermappings)
 
     def getDefectDensity(self, line):
         list = line.strip(' ').split(' ')
@@ -116,11 +118,18 @@ class fileparsing:
         for wafer in self.wafermappings:
             i+=1
             f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
-            # f.write("Timestamp\t\t\tInpectionId\t\t\tLotID\t\t\tSampleSize\t\t\tStepID\t\t\tDeviceID\t\t\tWaferID\n")
             f.write(str(wafer))
 
-    def addClassfication(self,index,classification):
+    def addClassfication(self, index, classification):
         if len(self.wafermappings)<index:
             print("INDEX IS OUT OF BOUNDS!")
         else:
             self.wafermappings[index].addClassfication(classification)
+
+    def sendReport(self, i):
+        if i < len(self.wafermappings):
+            return str(self.wafermappings[i])
+        else:
+            return "DONE"
+
+
