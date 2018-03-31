@@ -5,6 +5,8 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt
 #from fileparsing import parsing
 import socket
+from datetime import datetime
+
 
 
 
@@ -67,20 +69,19 @@ class App(QWidget):
     def sendFilesToServer(self, fileName):
         try:
             # Send data
-            print ("------------------"+"\n\n\n"+fileName)
+            # print ("------------------"+"\n\n\n"+fileName)
             f = open(fileName,'rb')
             while True:
                 message = f.read(1024)
                 if not message:
                     f.close()
                     break
-                print (sys.stderr, 'sending "%s"\n' % message.decode())
+                # print (sys.stderr, 'sending "%s"\n' % message.decode())
                 self.sock.sendto(message, self.server_address)
         except:
             print("There was a problem sending the file data.\n")
 
     def openFileNamesDialog(self):
-#        self.ConnectToServer()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self.filenames = QFileDialog.getOpenFileNames(self,"Upload Files", "","Text files (*.txt)", options=options)
@@ -89,12 +90,22 @@ class App(QWidget):
             self.fileNameBox.setText(str(filename))
 
     def uploadFunc(self):
-        self.ConnectToServer()
-        self.fileNameBox.setText("")
-        f = open(str(self.filenames[0][0]), 'r')
-        for i in range(0, len(self.filenames[0])):
-            self.sendFilesToServer(self.filenames[0][i])
-        self.DisconnectToServer()
+        #not ideal but it works
+        try:
+            # if str(self.filenames[0][0])=="":
+            #     print("Please Input A Correct String")
+            #     return
+            print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+            self.ConnectToServer()
+            self.fileNameBox.setText("")
+            f = open(str(self.filenames[0][0]), 'r')
+            for i in range(0, len(self.filenames[0])):
+                self.sendFilesToServer(self.filenames[0][i])
+            self.DisconnectToServer()
+            print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        except:
+            self.DisconnectToServer()
+            print("There was an error uploading the files")
 
 
     def DisconnectToServer(self):
@@ -107,7 +118,7 @@ class App(QWidget):
         # Connect the socket to the port where the server is listening
         # '10.147.76.70'
         self.server_address = ("localhost", 10000)
-        print (sys.stderr, 'connecting to %s port %s' % self.server_address)
+        # print (sys.stderr, 'connecting to %s port %s' % self.server_address)
         self.sock.connect(self.server_address)
 
     def printReport(self):
@@ -130,6 +141,9 @@ class App(QWidget):
                 separateFile = data_decoded.split("EOF")
                 f.write(separateFile[0])
                 f.close()
+                if len(separateFile)>1:
+                    f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
+                    f.write(separateFile[1])
             else:
                 f.write(data_decoded)
         self.DisconnectToServer()
@@ -137,10 +151,10 @@ class App(QWidget):
     def trainMachine(self):
         self.ConnectToServer()
         self.sock.sendto("Training mode".encode('utf-8'), self.server_address)
-#        self.fileNameBox.setText("")
-#        f = open(str(self.filenames[0][0]), 'r')
-#        for i in range(0, len(self.filenames[0])):
-#            sendFilesToServer(self.filenames[0][i])
+        # self.fileNameBox.setText("")
+        # f = open(str(self.filenames[0][0]), 'r')
+        # for i in range(0, len(self.filenames[0])):
+        # sendFilesToServer(self.filenames[0][i])
         data = self.sock.recv(1024)
         print(data.decode())
         self.DisconnectToServer()

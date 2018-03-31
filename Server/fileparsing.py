@@ -9,6 +9,8 @@ import cgitb
 from wafermappingsignature import wafermappingsignature
 import sys
 import os
+from datetime import datetime
+
 
 class fileparsing:
 
@@ -20,14 +22,13 @@ class fileparsing:
         self.wafer = wafermappingsignature()
 
     def parse(self):
-        print("got in")
         i = 1
         dir_path = os.path.join(os.getcwd(), "input_files")
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt"):
                 try:
                     self.fileDescriptor = open(os.path.join(dir_path, filename), "r")
-                    print(dir_path + " " + filename)
+                    # print(dir_path + " " + filename)
                 except OSError:
                     print ("File could not be opened")
                 try:
@@ -64,10 +65,10 @@ class fileparsing:
                             self.defectdensity = self.getDefectDensity(line)
                             self.wafer.addDefectDensity(self.defectdensity)
                 finally:
-                    print(self.wafer)
+                    # print(self.wafer)
                     self.fileDescriptor.close()
                     self.wafermappings.append(self.wafer)
-                    print(self.wafermappings)
+                    # print(self.wafermappings)
 
     def getDefectDensity(self, line):
         list = line.strip(' ').split(' ')
@@ -113,12 +114,14 @@ class fileparsing:
             index = index+1
         # print(self.wafermap)
     def saveWaferMappings(self):
-        dir_path = os.path.join(os.getcwd(), "Report")
+        dir_path = os.path.join(os.getcwd(), "Report/")
         i=0
         for wafer in self.wafermappings:
             i+=1
             f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
             f.write(str(wafer))
+            f.close()
+        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
     def addClassfication(self, index, classification):
         if len(self.wafermappings)<index:
@@ -131,5 +134,3 @@ class fileparsing:
             return str(self.wafermappings[i])
         else:
             return "DONE"
-
-
