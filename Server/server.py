@@ -64,7 +64,7 @@ class Server(fileparsing):
     def column(self,matrix, i):
         return [row[i] for row in matrix]
 
-    def plotFile(self,file_path):
+    def plotFile(self,file_path, index):
         file = open(file_path,"r")
         for line in file:
             if 'DefectList' in line:
@@ -96,10 +96,17 @@ class Server(fileparsing):
         frame1 = plt.gca()
         frame1.axes.xaxis.set_ticklabels([])
         frame1.axes.yaxis.set_ticklabels([])
-        plot_name = "classified_images/classified.png"
+        plot_name = "classified_images/classified"+str(index)+".png"
         plt.savefig(plot_name)
         plt.close()
         return plot_name
+
+    def isItTrained(self):
+        dir_path = os.path.join(os.getcwd())
+        for filename in os.listdir(dir_path):
+            if filename.endswith(".h5"):
+                return True
+        return False
 
     def readCommands(self):
         while True:
@@ -113,7 +120,7 @@ class Server(fileparsing):
             if "Send Report" in data_decoded:
                 #send report function
                 directory_path = os.path.join(os.getcwd(), "Report")
-                for filename in os.listdir(dir_path):
+                for filename in os.listdir(directory_path):
                     if filename.endswith(".txt"):
                         f = open(os.path.join(directory_path, filename), 'rb')
                         l = f.read(1024)
@@ -126,6 +133,13 @@ class Server(fileparsing):
                 self.training()
                 connection.sendall("Training completed".encode('utf-8'))
                 #connection.close()
+            elif "is it trained" in data_decoded:
+                if self.isItTrained():
+                    connection.sendall("yes".encode('utf-8'))
+                else:
+                    connection.sendall("no".encode('utf-8'))
+            elif not data:
+                pass
             else:
                 try:
                     i=1
@@ -164,10 +178,12 @@ class Server(fileparsing):
                 finally:
                     connection.close()
                     classifications = []
+                    index = 0
                     for filename in os.listdir(dir_path):
                         if filename.endswith(".txt") :
                             print(dir_path+"/"+filename)
-                            image_path = self.plotFile(dir_path+"/" + filename)
+                            image_path = self.plotFile(dir_path+"/" + filename, index)
+                            index = index + 1
                             test_image = image.load_img(image_path, target_size = (576, 432))
                             test_image = image.img_to_array(test_image)
                             # print(training_set.class_indices)
