@@ -178,12 +178,12 @@ class Server(fileparsing):
                             f.close()
                         else:
                             f.write(data_decoded)
-                        data = connection.recv(1024)
+                        data = self.connection.recv(1024)
                         data_decoded = data.decode()
 
 
                 finally:
-                    connection.close()
+                    self.connection.close()
                     classifications = []
                     self.createImagesFromTxt()
                     self.classifyDefects()
