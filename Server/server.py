@@ -132,7 +132,6 @@ class Server(fileparsing):
             elif "Training mode" in data_decoded:
                 self.training()
                 connection.sendall("Training completed".encode('utf-8'))
-                #connection.close()
             elif "is it trained" in data_decoded:
                 if self.isItTrained():
                     connection.sendall("yes".encode('utf-8'))
@@ -149,10 +148,8 @@ class Server(fileparsing):
                     i= i+1
                     # Receive the data in small chunks and retransmit it
                     while True:
-                        print (sys.stderr, 'received "%s"' % data_decoded)
                         if not data:
                             #case where all files are sent and no more data is being received
-                            # print (sys.stderr, 'empty data from client', client_address)
                             f.close()
                             file.parse()
                             break
@@ -164,11 +161,6 @@ class Server(fileparsing):
                             first_and_second_file = data_decoded.split("EndOfFile;")
                             f.write(first_and_second_file[0])
                             f.close()
-#                            if len(first_and_second_file)==2:
-#                                if first_and_second_file[1]!="" or first_and_second_file !=" ":
-#                                    f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
-#                                    i= i+1
-#                                    f.write(first_and_second_file[1])
                         else:
                             f.write(data_decoded)
                         data = connection.recv(1024)
