@@ -100,13 +100,13 @@ class Server(fileparsing):
         file_name= file_name.replace(".txt","")
         my_path = os.path.abspath(__file__)
         plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",file_name)
-        figure = plt.figure()
+#        figure = plt.figure()
         plt.savefig('{}.png'.format(plot_name))
-        plt.clf()
-        plt.close(plt.figure())
+#        plt.clf()
+        plt.close()
         return plot_name
 
-    def sendReport(self, connection):
+    def sendReport(self):
         directory_path = os.path.join(os.getcwd(), "Report/")
         # print(directory_path)
         for filename in os.listdir(directory_path):
@@ -115,27 +115,43 @@ class Server(fileparsing):
                 f = open(os.path.join(directory_path, filename), 'rb')
                 l = f.read(1024)
                 while(l):
-                    self.sock.send(l)
+                    self.connection.send(l)
                     l = f.read(1024)
                 f.close()
+    
+    def isItTrained(self):
+        dir_path = os.path.join(os.getcwd())
+        for filename in os.listdir(dir_path):
+            if filename.endswith(".h5"):
+                return True
+        return False
 
     def readCommands(self):
         while True:
             # Wait for a connection
             # print ('waiting for a connection')
-            connection, client_address = self.sock.accept()
+            self.connection, client_address = self.sock.accept()
             # print (sys.stderr, 'connection from', client_address)
-            data = connection.recv(1024)
+            data = self.connection.recv(1024)
             data_decoded = data.decode()
             self.wafermappings = fileparsing()
             if "Send Report" in data_decoded:
-                self.sendReport(connection)
-                connection.close()
+                self.sendReport()
+                self.connection.close()
 
             elif "Training mode" in data_decoded:
                 self.training()
-                connection.sendall("Training completed".encode('utf-8'))
-                #connection.close()
+                self.connection.sendall("Training completed".encode('utf-8'))
+                
+            elif "is it trained" in data_decoded:
+                if self.isItTrained():
+                    self.connection.sendall("yes".encode('utf-8'))
+                else:
+                    self.connection.sendall("no".encode('utf-8'))
+                
+            elif not data:
+                pass
+
             else:
                 try:
                     i=1
@@ -150,7 +166,7 @@ class Server(fileparsing):
                             #case where all files are sent and no more data is being received
                             # print (sys.stderr, 'empty data from client', client_address)
                             f.close()
-                            wafermappings.parse()
+                            self.wafermappings.parse()
                             break
                         if f.closed and data_decoded!="":
                             # case where multiple files are sent
@@ -160,11 +176,6 @@ class Server(fileparsing):
                             first_and_second_file = data_decoded.split("EndOfFile;")
                             f.write(first_and_second_file[0])
                             f.close()
-                            # if len(first_and_second_file)==2:
-                                # if first_and_second_file[1]!="" or first_and_second_file !=" ":
-                                # f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
-                                # i= i+1
-                                # f.write(first_and_second_file[1])
                         else:
                             f.write(data_decoded)
                         data = connection.recv(1024)
@@ -235,9 +246,6 @@ class Server(fileparsing):
             return 'sprays'
         elif result[0][0] == 8:
             return 'streaks'
-
 server = Server();
 #server.createImagesFromTxt()
-server.training()
-server.classifyDefects()
-# server.readCommands();
+server.readCommands();

@@ -22,13 +22,13 @@ class fileparsing:
         self.wafer = wafermappingsignature()
 
     def parse(self):
+        print("got in")
         i = 1
         dir_path = os.path.join(os.getcwd(), "input_files")
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt"):
                 try:
                     self.fileDescriptor = open(os.path.join(dir_path, filename), "r")
-                    # print(dir_path + " " + filename)
                 except OSError:
                     print ("File could not be opened")
                 try:
