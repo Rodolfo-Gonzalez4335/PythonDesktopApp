@@ -22,7 +22,8 @@ class Server(fileparsing):
         # self.training()
         self.host = gethostbyname( '0.0.0.0' )
         #self.host 10.145.31.19
-        self.server_address = ("localhost", 10000)
+        # self.server_address = ("localhost", 10000)
+        self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -118,7 +119,7 @@ class Server(fileparsing):
                     self.connection.send(l)
                     l = f.read(1024)
                 f.close()
-    
+
     def isItTrained(self):
         dir_path = os.path.join(os.getcwd())
         for filename in os.listdir(dir_path):
@@ -142,13 +143,13 @@ class Server(fileparsing):
             elif "Training mode" in data_decoded:
                 self.training()
                 self.connection.sendall("Training completed".encode('utf-8'))
-                
+
             elif "is it trained" in data_decoded:
                 if self.isItTrained():
                     self.connection.sendall("yes".encode('utf-8'))
                 else:
                     self.connection.sendall("no".encode('utf-8'))
-                
+
             elif not data:
                 pass
 
@@ -159,7 +160,6 @@ class Server(fileparsing):
                     dir_path = os.path.join(os.getcwd(), "input_files")
                     f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                     i= i+1
-                    # Receive the data in small chunks and retransmit it
                     while True:
                         # print (sys.stderr, 'received "%s"' % data_decoded)
                         if not data:
@@ -174,16 +174,26 @@ class Server(fileparsing):
                             i= i+1
                         if "EndOfFile" in data_decoded:
                             first_and_second_file = data_decoded.split("EndOfFile;")
+                            first_and_second_file = []
+                            indexEOF = data_decoded.find("EndOfFile")
+                            first_and_second_file.append(data_decoded[0:indexEOF])
+                            first_and_second_file.append(data_decoded[indexEOF+12:-1])
+                            # print(first_and_second_file[0] + "\n\n"+first_and_second_file[1])
                             f.write(first_and_second_file[0])
                             f.close()
+                            if  "FileVersion" in first_and_second_file[1]:
+                                f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+                                i= i+1
+                                f.write(first_and_second_file[1])
+
                         else:
                             f.write(data_decoded)
-                        data = connection.recv(1024)
+                        data = self.connection.recv(1024)
                         data_decoded = data.decode()
 
 
                 finally:
-                    connection.close()
+                    self.connection.close()
                     classifications = []
                     self.createImagesFromTxt()
                     self.classifyDefects()
