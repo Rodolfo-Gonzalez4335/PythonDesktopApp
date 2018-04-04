@@ -166,16 +166,13 @@ class App(QWidget):
                         if data_decoded[index_end+2:].find("W")>-1:
                             index_begin =index_end+3
                             separateFiles.append(data_decoded[index_begin + data_decoded[index_end+3:].find("W") : ])
-#                    print(separateFiles.count()
                     for index in range(len(separateFiles)):
                         if separateFiles[index] != "":
                             f.write(separateFiles[index])
-                        if index != len(separateFiles)-1 and separateFiles[index] != "" and separateFiles[index].find("W") > -1:
+                        if index != len(separateFiles)-1 and separateFiles[index] != "":
                             f.close()
                             f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
                             i=i+1
-                        elif separateFiles[index].find("W") != -1:
-                            f.close()
                 else:
                     f.write(data_decoded)
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
