@@ -123,7 +123,7 @@ class App(QWidget):
 
             # Connect the socket to the port where the server is listening
             # '10.147.76.70'
-            self.server_address = ("localhost", 10000)
+            self.server_address = ("10.145.235.30", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
@@ -150,9 +150,32 @@ class App(QWidget):
                     f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
                     i = i+1
                 if "EOF" in data_decoded:
-                    separateFile = data_decoded.split("EOF")
-                    f.write(separateFile[0])
-                    f.close()
+                    index_begin = 0
+                    index_end = 0
+                    separateFiles = []
+                    for index in range(data_decoded.count("EOF")):
+                        if index_end == 0:
+                            index_end = data_decoded.find("EOF")
+                        else:
+                            index_begin=index_end+3
+                            index_end = index_begin + data_decoded[index_begin:].find("EOF")
+
+                        separateFiles.append(data_decoded[index_begin:index_end])
+                
+                    if index_end+3<len(data_decoded):
+                        if data_decoded[index_end+2:].find("W")>-1:
+                            index_begin =index_end+3
+                            separateFiles.append(data_decoded[index_begin + data_decoded[index_end+3:].find("W") : ])
+#                    print(separateFiles.count()
+                    for index in range(len(separateFiles)):
+                        if separateFiles[index] != "":
+                            f.write(separateFiles[index])
+                        if index != len(separateFiles)-1 and separateFiles[index] != "" and separateFiles[index].find("W") > -1:
+                            f.close()
+                            f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
+                            i=i+1
+                        elif separateFiles[index].find("W") != -1:
+                            f.close()
                 else:
                     f.write(data_decoded)
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
@@ -161,6 +184,7 @@ class App(QWidget):
         except:
             self.outputReady = "Printing failed"
             self.consoleOutput()
+                
 
     def trainMachine(self):
         try:
