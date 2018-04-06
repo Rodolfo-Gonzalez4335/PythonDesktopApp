@@ -1,8 +1,8 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox
 from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import QDir, Qt, QLine
 import socket
 from datetime import datetime
 
@@ -33,13 +33,19 @@ class App(QWidget):
         self.line = QLabel("<b><font color = 'white'>_______________________________________________________________________________________________________________________________________________________________________________________________________________</font></b>", self)
         self.fileName = QLabel("<b><font color='white'>File Name: </font></b>", self)
         self.txtType = QLabel("<b><font color='white'>.txt files only </font></b>", self)
+        self.correcTitle = QLabel("<h3><font color='white'>User Correction: </font></h3>", self)
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(300)
         
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
-        self.consoleField.setFixedSize(690,150)
+        self.consoleField.setFixedSize(820,150)
+        
+        self.comboBox = QComboBox(self)
+        self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Scratch", "Spin", "Spray", "Streak"])
+        
+        self.verticalLine = self.verticalFunc()
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
@@ -47,6 +53,7 @@ class App(QWidget):
         self.uploadButton = QPushButton("Upload", self)
         self.trainButton = QPushButton("Train", self)
         self.connectButton = QPushButton("Check Connection", self)
+        self.userCorrect = QPushButton("Correction", self)
 
         #Title placement
         self.title.move(15,10)
@@ -61,7 +68,10 @@ class App(QWidget):
         self.printButton.move(40, 300)
         self.trainButton.move(200, 300)
         self.connectButton.move(300, 300)
-        self.consoleField.move(0, 426)
+        self.consoleField.move(0, 450)
+        self.correcTitle.move(620, 60)
+        self.comboBox.move(630, 120)
+        self.userCorrect.move(630, 150)
         
 
         #Buttons Action
@@ -71,7 +81,7 @@ class App(QWidget):
         self.trainButton.clicked.connect(self.trainMachine)
         self.connectButton.clicked.connect(self.checkConnection)
 
-        self.setFixedSize(690, 526)
+        self.setFixedSize(820, 600)
 
         #Layout
         self.consoleOutput()
@@ -109,6 +119,12 @@ class App(QWidget):
         except:
             self.outputReady = "Your files failed to be uploaded"
             self.consoleOutput()
+
+    def VLine(self):
+        toto = QFrame()
+        toto.setFrameShape(QFrame.VLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        return toto
 
 
     def DisconnectToServer(self):
@@ -219,6 +235,14 @@ class App(QWidget):
 
     def consoleOutput(self):
         self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady)
+
+    def verticalFunc(self):
+        x = 600
+        y = 45
+        while y < 450:
+            some = QLabel("<b><font color='white'>|</font></b>", self)
+            some.move(x,y)
+            y=y+1
 
 if __name__ == '__main__':
     
