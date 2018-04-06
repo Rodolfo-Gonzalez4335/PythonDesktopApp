@@ -22,8 +22,8 @@ class Server(fileparsing):
         # self.training()
         self.host = gethostbyname( '0.0.0.0' )
         #self.host 10.145.31.19
-        # self.server_address = ("localhost", 10000)
-        self.server_address = (self.host, 10000)
+        self.server_address = ("localhost", 10000)
+        # self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -66,9 +66,48 @@ class Server(fileparsing):
     def column(self,matrix, i):
         return [row[i] for row in matrix]
 
+    def cleanString(self, incomingString):
+        newstring = incomingString
+        newstring = newstring.replace("!","")
+        newstring = newstring.replace("@","")
+        newstring = newstring.replace("#","")
+        newstring = newstring.replace("$","")
+        newstring = newstring.replace("%","")
+        newstring = newstring.replace("^","")
+        newstring = newstring.replace("&","and")
+        newstring = newstring.replace("*","")
+        newstring = newstring.replace("(","")
+        newstring = newstring.replace(")","")
+        newstring = newstring.replace("+","")
+        newstring = newstring.replace("=","")
+        newstring = newstring.replace("?","")
+        newstring = newstring.replace("\'","")
+        newstring = newstring.replace("\"","")
+        newstring = newstring.replace("\n","")
+        newstring = newstring.replace("\t","")
+        newstring = newstring.replace("{","")
+        newstring = newstring.replace("}","")
+        newstring = newstring.replace("[","")
+        newstring = newstring.replace("]","")
+        newstring = newstring.replace("<","")
+        newstring = newstring.replace(">","")
+        newstring = newstring.replace("~","")
+        newstring = newstring.replace("`","")
+        newstring = newstring.replace(":","")
+        newstring = newstring.replace(";","")
+        newstring = newstring.replace("|","")
+        newstring = newstring.replace("\\","")
+        newstring = newstring.replace("/","")
+        newstring = newstring.replace(" ","")
+        return newstring
+
     def plotFile(self,file_path,file_name):
         file = open(file_path,"r")
         for line in file:
+            if "LotID" in line:
+                name = line.split(" ");
+                if name[1]!="":
+                    name[1]= self.cleanString(name[1])
             if 'DefectList' in line:
                 array_of_nums = []
                 for line in file:
@@ -100,10 +139,8 @@ class Server(fileparsing):
         frame1.axes.yaxis.set_ticklabels([])
         file_name= file_name.replace(".txt","")
         my_path = os.path.abspath(__file__)
-        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",file_name)
-#        figure = plt.figure()
+        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",name[1])
         plt.savefig('{}.png'.format(plot_name))
-#        plt.clf()
         plt.close()
         return plot_name
 
@@ -155,6 +192,7 @@ class Server(fileparsing):
 
             else:
                 try:
+                    #todo have to stop overriding files and add the lot id in png and report
                     i=1
                     # Open file to input_files directory in Server
                     dir_path = os.path.join(os.getcwd(), "input_files")
@@ -173,7 +211,6 @@ class Server(fileparsing):
                             f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                             i= i+1
                         if "EndOfFile" in data_decoded:
-                            first_and_second_file = data_decoded.split("EndOfFile;")
                             first_and_second_file = []
                             indexEOF = data_decoded.find("EndOfFile")
                             first_and_second_file.append(data_decoded[0:indexEOF])
@@ -199,10 +236,8 @@ class Server(fileparsing):
                     self.classifyDefects()
 
     def createImagesFromTxt(self):
-        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         dir_path = os.path.join(os.getcwd(), "input_files/")
-        # filename="file_8.txt"
-        # self.plotFile(dir_path+"/" + filename,filename)
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt") :
                 image_path = self.plotFile(dir_path+ filename,filename)
@@ -227,12 +262,14 @@ class Server(fileparsing):
                 classifier=model_from_json(loaded_model_json)
                 classifier.load_weights("model.h5")
                 result = classifier.predict(test_image)
-                classifications.append(self.prediction(result))
-        i = 0
+                lotId = filename.replace(".png","")
+                classifications.append([self.prediction(result),lotId])
+
         #adding the classification to the wafer mappings
         for classification in classifications:
-            self.wafermappings.addClassfication(i, classification)
-            i = i+1
+            print(classification)
+            self.wafermappings.addClassfication(classification)
+
         #file is the data structure that has all the wafermappings
         self.wafermappings.saveWaferMappings()
         print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])

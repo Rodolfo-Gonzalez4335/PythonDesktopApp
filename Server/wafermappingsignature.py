@@ -16,7 +16,7 @@ class wafermappingsignature:
         self.defectList = []
         self.defectdensity = "NA"
         self.classification = "NA"
-
+    
     def addTimeStamp(self,timestamp):
         self.filetimestamp = timestamp
 
