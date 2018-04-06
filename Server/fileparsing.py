@@ -115,19 +115,29 @@ class fileparsing:
         # print(self.wafermap)
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")
-        i=0
+        temp_dir_path = os.path.join(os.getcwd(), "Report/temp")
+        #clearing temp folder
+        for the_file in os.listdir(temp_dir_path):
+            file_path = os.path.join(temp_dir_path, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception as e:
+                print(e)
         for wafer in self.wafermappings:
-            i+=1
-            f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+            lotId = wafer.lotid.replace(";","")
+            f=open(os.path.join(dir_path, lotId+".txt"),'w')
             f.write(str(wafer))
             f.close()
+            f1=open(os.path.join(temp_dir_path, lotId+".txt"),'w')
+            f1.write(str(wafer))
+            f1.close()
         print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
-    def addClassfication(self, index, classification):
-        if len(self.wafermappings)<index:
-            print("INDEX IS OUT OF BOUNDS!")
-        else:
-            self.wafermappings[index].addClassfication(classification)
+    def addClassfication(self, classification):
+        for wafer in self.wafermappings:
+            if (wafer.lotid==classification[1]):
+                wafer.addClassfication(classification[0])
 
     def sendReport(self, i):
         if i < len(self.wafermappings):
