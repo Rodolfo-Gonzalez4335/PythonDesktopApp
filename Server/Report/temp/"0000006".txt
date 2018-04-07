@@ -1,0 +1,11 @@
+WaferId"15";
+Classification: NA
+========================================
+LotId: "0000006";
+StepID: "250P1DEP";
+SetupID"Z21106_250P1DEP" 08-01-17 05:43:08;
+DeviceID: "Z21106";
+Station ID: "" "NONE" "AIT02";
+SampleSize: 1 200;
+TimeStamp: NA
+EOF

@@ -1,0 +1,11 @@
+WaferId"04";
+Classification: NA
+========================================
+LotId: "0000003";
+StepID: "200PADOX";
+SetupID"A2274_200PADOX" 10-19-17 12:08:02;
+DeviceID: "A2274";
+Station ID: "" "NONE" "AIT02";
+SampleSize: 1 150;
+TimeStamp: NA
+EOF
