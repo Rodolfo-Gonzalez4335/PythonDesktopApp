@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFil
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt, QLine
 import socket
-from datetime import datetime
+import time
 
 
 
@@ -141,7 +141,7 @@ class App(QWidget):
 
             # Connect the socket to the port where the server is listening
             # '10.147.76.70'
-            self.server_address = ("10.145.235.30", 10000)
+            self.server_address = ("localhost", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
@@ -155,44 +155,16 @@ class App(QWidget):
             self.ConnectToServer()
             self.sock.sendto("Send Report".encode('utf-8'), self.server_address)
             dir_path = os.path.join(os.getcwd(), "Report_files")
-            i = 1
-            f=open(os.path.join(dir_path, 'received_file'+ str(i)+".txt"),'w')
-            i=i+1
-            while True:
-                data = self.sock.recv(1024)
-                data_decoded = data.decode()
-                if not data:
-                    f.close()
-                    break
-                if f.closed and data_decoded != "":
-                    f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
-                    i = i+1
-                if "EOF" in data_decoded:
-                    index_begin = 0
-                    index_end = 0
-                    separateFiles = []
-                    for index in range(data_decoded.count("EOF")):
-                        if index_end == 0:
-                            index_end = data_decoded.find("EOF")
-                        else:
-                            index_begin=index_end+3
-                            index_end = index_begin + data_decoded[index_begin:].find("EOF")
-
-                        separateFiles.append(data_decoded[index_begin:index_end])
-                
-                    if index_end+3<len(data_decoded):
-                        if data_decoded[index_end+2:].find("W")>-1:
-                            index_begin =index_end+3
-                            separateFiles.append(data_decoded[index_begin + data_decoded[index_end+3:].find("W") : ])
-                    for index in range(len(separateFiles)):
-                        if separateFiles[index] != "":
-                            f.write(separateFiles[index])
-                        if index != len(separateFiles)-1 and separateFiles[index] != "":
-                            f.close()
-                            f=open(os.path.join(dir_path, 'received_file' + str(i)+".txt"), 'w')
-                            i=i+1
-                else:
-                    f.write(data_decoded)
+#            data = self.sock.recv(1024)
+#            data_decoded = data.decode()
+#            f=open(os.path.join(dir_path, data_decoded), 'w')
+            array_reports = self.recv_timeout()
+            i = 0
+            while i < len(array_reports):
+                f=open(os.path.join(dir_path, array_reports[i]), 'w')
+                f.write(array_reports[i+1])
+                f.close()
+                i = i + 2
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
             self.consoleOutput()
             self.DisconnectToServer()
@@ -254,6 +226,42 @@ class App(QWidget):
             some = QLabel("<b><font color='white'>|</font></b>", self)
             some.move(x,y)
             y=y+1
+
+    def recv_timeout(self,timeout=2):
+        #make socket non blocking
+        self.sock.setblocking(0)
+        
+    
+        #total data partwise in an array
+        total_data=[];
+        data='';
+    
+        #beginning time
+        begin=time.time()
+        while 1:
+            #if you got some data, then break after timeout
+            if total_data and time.time()-begin > timeout:
+                break
+        
+            #if you got no data at all, wait a little longer, twice the timeout
+            elif time.time()-begin > timeout*2:
+                break
+        
+            #recv something
+            try:
+                data = self.sock.recv(1024)
+                if data:
+                    total_data.append(data.decode())
+                    #change the beginning time for measurement
+                    begin=time.time()
+                else:
+                    #sleep for sometime to indicate a gap
+                    time.sleep(0.1)
+            except:
+                pass
+
+        #join all parts to make final string
+        return (total_data)
 
 if __name__ == '__main__':
     
