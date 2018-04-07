@@ -150,6 +150,7 @@ class Server(fileparsing):
         for filename in os.listdir(directory_path):
             # print(filename)
             if filename.endswith(".txt"):
+                self.connection.send(filename.encode('utf-8'))
                 f = open(os.path.join(directory_path, filename), 'rb')
                 l = f.read(1024)
                 while(l):
