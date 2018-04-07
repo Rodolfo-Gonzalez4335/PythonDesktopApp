@@ -18,6 +18,7 @@ class App(QWidget):
         self.serverConnection = ""
         self.trained = ""
         self.outputReady = ""
+        self.hasCorrected = ""
         self.initUI()
 
     def initUI(self):
@@ -80,6 +81,7 @@ class App(QWidget):
         self.printButton.clicked.connect(self.printReport)
         self.trainButton.clicked.connect(self.trainMachine)
         self.connectButton.clicked.connect(self.checkConnection)
+        self.userCorrect.clicked.connect(self.uCorrection)
 
         self.setFixedSize(820, 600)
 
@@ -233,8 +235,17 @@ class App(QWidget):
         except:
             pass
 
+    def uCorrection(self):
+        try:
+            print(self.comboBox.currentText())
+            self.hasCorrected = "Your wafer has been corrected!"
+            self.consoleOutput()
+        except:
+            self.hasCorrected = "Your correction failed"
+            self.consoleOutput()
+
     def consoleOutput(self):
-        self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady)
+        self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady + "\n" + self.hasCorrected)
 
     def verticalFunc(self):
         x = 600
