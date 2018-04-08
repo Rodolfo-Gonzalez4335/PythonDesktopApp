@@ -46,7 +46,7 @@ class App(QWidget):
         self.consoleField.setFixedSize(820,150)
         
         self.comboBox = QComboBox(self)
-        self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Scratch", "Spin", "Spray", "Streak"])
+        self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
         
 
         #Buttons Name
