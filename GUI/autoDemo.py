@@ -24,20 +24,22 @@ class App(QWidget):
     def initUI(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('technology-background-1632715-1279x854.jpg')
+        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
 
 
         #App components
-        self.title = QLabel("<h1><font color='white'>\t\t\t Wafer Map Signature Tool</font></h1>", self)
-        self.line = QLabel("<b><font color = 'white'>_______________________________________________________________________________________________________________________________________________________________________________________________________________</font></b>", self)
-        self.fileName = QLabel("<b><font color='white'>File Name: </font></b>", self)
-        self.txtType = QLabel("<b><font color='white'>.txt files only </font></b>", self)
-        self.correcTitle = QLabel("<h3><font color='white'>User Correction: </font></h3>", self)
+        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Tool</h1>", self)
+        self.line = QLabel("<b>_______________________________________________________________________________________________________________________________________________________________________________________________________________</b>", self)
+        self.fileName = QLabel("<b>File Name: </b>", self)
+        self.txtType = QLabel("<b>.txt files only </b>", self)
+        self.correcTitle = QLabel("<h3>User Correction: </h3>", self)
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(300)
+        
+        self.verticalLine = self.verticalFunc()
         
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
@@ -46,7 +48,6 @@ class App(QWidget):
         self.comboBox = QComboBox(self)
         self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Scratch", "Spin", "Spray", "Streak"])
         
-        self.verticalLine = self.verticalFunc()
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
@@ -223,7 +224,7 @@ class App(QWidget):
         x = 600
         y = 45
         while y < 450:
-            some = QLabel("<b><font color='white'>|</font></b>", self)
+            some = QLabel("<b>|</b>", self)
             some.move(x,y)
             y=y+1
 
