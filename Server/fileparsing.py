@@ -10,7 +10,7 @@ from wafermappingsignature import wafermappingsignature
 import sys
 import os
 from datetime import datetime
-
+from globalfunctions import deleteFiles
 
 class fileparsing:
 
@@ -42,6 +42,8 @@ class fileparsing:
                             self.wafer.addInpectionStationID(inspectionstationid)
                         elif 'LotID' in line:
                             lotid = line[6:-1]
+                            lotid= lotid.replace("\"","")
+                            lotid= lotid.replace(";","")
                             self.wafer.addLotID(lotid)
                         elif 'SampleSize' in line:
                             samplesize = line[11:-1]
@@ -113,17 +115,13 @@ class fileparsing:
             self.wafer.addToList(self.lineOfNums)
             index = index+1
         # print(self.wafermap)
+
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")
         temp_dir_path = os.path.join(os.getcwd(), "Report/temp")
         #clearing temp folder
-        for the_file in os.listdir(temp_dir_path):
-            file_path = os.path.join(temp_dir_path, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(e)
+        deleteFiles(temp_dir_path)
+
         for wafer in self.wafermappings:
             lotId = wafer.lotid.replace(";","")
             f=open(os.path.join(dir_path, lotId+".txt"),'w')
@@ -132,10 +130,12 @@ class fileparsing:
             f1=open(os.path.join(temp_dir_path, lotId+".txt"),'w')
             f1.write(str(wafer))
             f1.close()
-        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
     def addClassfication(self, classification):
+        print (classification)
         for wafer in self.wafermappings:
+            print("CLASSIFICATION" + wafer.lotid, classification[1])
             if (wafer.lotid==classification[1]):
                 wafer.addClassfication(classification[0])
 

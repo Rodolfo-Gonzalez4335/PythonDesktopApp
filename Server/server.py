@@ -17,11 +17,11 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 from datetime import datetime
 import shutil
+from globalfunctions import deleteFiles
 
 class Server(fileparsing):
 
     def __init__(self):
-        # self.training()
         self.host = gethostbyname( '0.0.0.0' )
         self.server_address = ("localhost", 10000)
         # self.server_address = (self.host, 10000)
@@ -104,13 +104,14 @@ class Server(fileparsing):
 
     def plotFile(self,file_path,file_name):
         file = open(file_path,"r")
+        array_of_nums = []
+        # name = []
         for line in file:
             if "LotID" in line:
                 name = line.split(" ");
                 if name[1]!="":
                     name[1]= self.cleanString(name[1])
             if 'DefectList' in line:
-                array_of_nums = []
                 for line in file:
                     if 'SummarySpec' in line:
                         break
@@ -183,8 +184,49 @@ class Server(fileparsing):
         except Exception as e:
             print(e)
             return False
+    def receiveAndWriteFiles(self, data,data_decoded):
+        try:
+            temp_dir_path = os.path.join(os.getcwd(), "input_files")
+            deleteFiles(temp_dir_path)
+            temp_dir_path = os.path.join(os.getcwd(), "classified_images/temp")
+            deleteFiles(temp_dir_path)
 
+            i=1
+            dir_path = os.path.join(os.getcwd(), "input_files")
+            f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+            i= i+1
+            while True:
+                # print (sys.stderr, 'received "%s"' % data_decoded)
+                if not data:
+                    #case where all files are sent and no more data is being received
+                    f.close()
+                    self.wafermappings.parse()
+                    break
 
+                # case where multiple files are sent in one data package
+                if f.closed and data_decoded!="":
+                    f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+                    i= i+1
+
+                if "EndOfFile" in data_decoded:
+                    first_and_second_file = []
+                    indexEOF = data_decoded.find("EndOfFile")
+                    first_and_second_file.append(data_decoded[0:indexEOF])
+                    first_and_second_file.append(data_decoded[indexEOF+12:-1])
+                    f.write(first_and_second_file[0])
+                    f.close()
+                    if  "FileVersion" in first_and_second_file[1]:
+                        f=open(os.path.join(dir_path+"/temp", 'file_'+ str(i)+".txt"),'w')
+                        i= i+1
+                        f.write(first_and_second_file[1])
+
+                else:
+                    f.write(data_decoded)
+                data = self.connection.recv(1024)
+                data_decoded = data.decode()
+
+        except Exception as e:
+            print (e)
 
     def readCommands(self):
         while True:
@@ -198,17 +240,14 @@ class Server(fileparsing):
             if "Send Report" in data_decoded:
                 self.sendReport()
                 self.connection.close()
-
             elif "Training mode" in data_decoded:
                 self.training()
                 self.connection.sendall("Training completed".encode('utf-8'))
-
             elif "is it trained" in data_decoded:
                 if self.isItTrained():
                     self.connection.sendall("yes".encode('utf-8'))
                 else:
                     self.connection.sendall("no".encode('utf-8'))
-
             elif not data:
                 pass
             elif "Correction" in data_decoded:
@@ -217,85 +256,29 @@ class Server(fileparsing):
                     self.connection.sendall("Succesfully made correction".encode("utf-8"))
                 else:
                     self.connection.sendall("Failed to send correction".encode("utf-8"))
-                #send message if succrecc
             else:
-                try:
-                    temp_dir_path = os.path.join(os.getcwd(), "input_files")
-                    #clearing temp folder
-                    for the_file in os.listdir(temp_dir_path):
-                        file_path = os.path.join(temp_dir_path, the_file)
-                        try:
-                            if os.path.isfile(file_path):
-                                os.unlink(file_path)
-                        except Exception as e:
-                            print(e)
-                    temp_dir_path = os.path.join(os.getcwd(), "classified_images/temp")
-                    #clearing temp folder
-                    for the_file in os.listdir(temp_dir_path):
-                        file_path = os.path.join(temp_dir_path, the_file)
-                        try:
-                            if os.path.isfile(file_path):
-                                os.unlink(file_path)
-                        except Exception as e:
-                            print(e)
-                    #todo have to stop overriding files and add the lot id in png and report
-                    i=1
-                    # Open file to input_files directory in Server
-                    dir_path = os.path.join(os.getcwd(), "input_files")
-                    f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
-                    i= i+1
-                    while True:
-                        # print (sys.stderr, 'received "%s"' % data_decoded)
-                        if not data:
-                            #case where all files are sent and no more data is being received
-                            # print (sys.stderr, 'empty data from client', client_address)
-                            f.close()
-                            self.wafermappings.parse()
-                            break
-                        if f.closed and data_decoded!="":
-                            # case where multiple files are sent
-                            f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
-                            i= i+1
-                        if "EndOfFile" in data_decoded:
-                            first_and_second_file = []
-                            indexEOF = data_decoded.find("EndOfFile")
-                            first_and_second_file.append(data_decoded[0:indexEOF])
-                            first_and_second_file.append(data_decoded[indexEOF+12:-1])
-                            # print(first_and_second_file[0] + "\n\n"+first_and_second_file[1])
-                            f.write(first_and_second_file[0])
-                            f.close()
-                            if  "FileVersion" in first_and_second_file[1]:
-                                f=open(os.path.join(dir_path+"/temp", 'file_'+ str(i)+".txt"),'w')
-                                i= i+1
-                                f.write(first_and_second_file[1])
+                self.receiveAndWriteFiles(data,data_decoded)
+                self.connection.close()
+                classifications = []
+                self.createImagesFromTxt()
+                self.classifyDefects()
 
-                        else:
-                            f.write(data_decoded)
-                        data = self.connection.recv(1024)
-                        data_decoded = data.decode()
-
-
-                finally:
-                    self.connection.close()
-                    classifications = []
-                    self.createImagesFromTxt()
-                    self.classifyDefects()
 
     def createImagesFromTxt(self):
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         dir_path = os.path.join(os.getcwd(), "input_files/")
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt") :
+                print(dir_path+filename)
                 image_path = self.plotFile(dir_path+ filename,filename)
-        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
     def classifyDefects(self):
-        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         dir_path = os.path.join(os.getcwd(),"classified_images/")
         classifications=[]
-        # note they are not being classified in order since list dir does it in whichever order it finds
-        # you have to account for this
-        print(os.listdir(dir_path))
+
+
         for filename in os.listdir(dir_path):
             if filename.endswith(".png") :
                 test_image = image.load_img("classified_images/"+filename, target_size = (576, 432))
@@ -313,12 +296,11 @@ class Server(fileparsing):
 
         #adding the classification to the wafer mappings
         for classification in classifications:
-            print(classification)
             self.wafermappings.addClassfication(classification)
 
-        #file is the data structure that has all the wafermappings
+        #wafermappings is the data structure that has all the signatures
         self.wafermappings.saveWaferMappings()
-        print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
     def prediction(self,result):
         if result[0][0] == 0:
