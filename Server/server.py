@@ -5,6 +5,7 @@ from fileparsing import fileparsing
 from wafermappingsignature import wafermappingsignature
 import os
 import numpy as np
+import time
 import sys
 import matplotlib.pyplot as plt
 from keras.models import Sequential,model_from_json
@@ -21,9 +22,8 @@ class Server(fileparsing):
     def __init__(self):
         # self.training()
         self.host = gethostbyname( '0.0.0.0' )
-        #self.host 10.145.31.19
-        self.server_address = ("localhost", 10000)
-        # self.server_address = (self.host, 10000)
+        # self.server_address = ("localhost", 10000)
+        self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -156,6 +156,7 @@ class Server(fileparsing):
                 while(l):
                     self.connection.send(l)
                     l = f.read(1024)
+                time.sleep(0.1);
                 f.close()
 
     def isItTrained(self):
