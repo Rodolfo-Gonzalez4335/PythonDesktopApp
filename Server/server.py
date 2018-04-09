@@ -16,6 +16,7 @@ from keras.layers import Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 from datetime import datetime
+import shutil
 
 class Server(fileparsing):
 
@@ -141,6 +142,8 @@ class Server(fileparsing):
         my_path = os.path.abspath(__file__)
         plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",name[1])
         plt.savefig('{}.png'.format(plot_name))
+        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/temp/",name[1])
+        plt.savefig('{}.png'.format(plot_name))
         plt.close()
         return plot_name
 
@@ -165,6 +168,23 @@ class Server(fileparsing):
             if filename.endswith(".h5"):
                 return True
         return False
+
+    def correction(self):
+        try:
+            dir_path = os.path.join(os.getcwd(), "classified_images/temp/")
+
+            data = self.connection.recv(1024)
+            data_decoded = data.decode()
+
+            for filename in os.listdir(dir_path):
+                training_set = os.path.join(os.getcwd(), "training_set/"+data_decoded)
+                shutil.copy(dir_path+filename,training_set)
+            return True;
+        except Exception as e:
+            print(e)
+            return False
+
+
 
     def readCommands(self):
         while True:
@@ -191,9 +211,33 @@ class Server(fileparsing):
 
             elif not data:
                 pass
-
+            elif "Correction" in data_decoded:
+                print("Doing a correction")
+                if (self.correction()):
+                    self.connection.sendall("Succesfully made correction".encode("utf-8"))
+                else:
+                    self.connection.sendall("Failed to send correction".encode("utf-8"))
+                #send message if succrecc
             else:
                 try:
+                    temp_dir_path = os.path.join(os.getcwd(), "input_files")
+                    #clearing temp folder
+                    for the_file in os.listdir(temp_dir_path):
+                        file_path = os.path.join(temp_dir_path, the_file)
+                        try:
+                            if os.path.isfile(file_path):
+                                os.unlink(file_path)
+                        except Exception as e:
+                            print(e)
+                    temp_dir_path = os.path.join(os.getcwd(), "classified_images/temp")
+                    #clearing temp folder
+                    for the_file in os.listdir(temp_dir_path):
+                        file_path = os.path.join(temp_dir_path, the_file)
+                        try:
+                            if os.path.isfile(file_path):
+                                os.unlink(file_path)
+                        except Exception as e:
+                            print(e)
                     #todo have to stop overriding files and add the lot id in png and report
                     i=1
                     # Open file to input_files directory in Server
@@ -221,7 +265,7 @@ class Server(fileparsing):
                             f.write(first_and_second_file[0])
                             f.close()
                             if  "FileVersion" in first_and_second_file[1]:
-                                f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
+                                f=open(os.path.join(dir_path+"/temp", 'file_'+ str(i)+".txt"),'w')
                                 i= i+1
                                 f.write(first_and_second_file[1])
 
