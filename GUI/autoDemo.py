@@ -141,11 +141,12 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            # '10.147.76.70'
-            self.server_address = ("localhost", 10000)
+            #self.server_address = ("localhost", 10000)
+            self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
+        #self.DisconnectToServer()
         except:
             self.serverConnection = "Server is not connected"
             self.consoleOutput()
@@ -156,9 +157,6 @@ class App(QWidget):
             self.ConnectToServer()
             self.sock.sendto("Send Report".encode('utf-8'), self.server_address)
             dir_path = os.path.join(os.getcwd(), "Report_files")
-#            data = self.sock.recv(1024)
-#            data_decoded = data.decode()
-#            f=open(os.path.join(dir_path, data_decoded), 'w')
             array_reports = self.recv_timeout()
             i = 0
             while i < len(array_reports):
@@ -210,10 +208,21 @@ class App(QWidget):
 
     def uCorrection(self):
         try:
-            print(self.comboBox.currentText())
-            self.hasCorrected = "Your wafer has been corrected!"
-            self.consoleOutput()
-        except:
+            self.ConnectToServer()
+            self.sock.sendto("Correction".encode('utf-8'), self.server_address)
+            time.sleep(0.1)
+            print("got here")
+            self.sock.sendto(self.comboBox.currentText().encode('utf-8').lower(), self.server_address)
+            data = self.sock.recv(1024)
+            if data:
+                self.hasCorrected = data.decode()
+                self.consoleOutput()
+            else:
+                self.hasCorrected = "Your correction failed"
+                self.consoleOutput()
+            self.DisconnectToServer()
+        except Exception as e:
+            print(e)
             self.hasCorrected = "Your correction failed"
             self.consoleOutput()
 
