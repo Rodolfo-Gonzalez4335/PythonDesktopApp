@@ -67,16 +67,14 @@ class Server(fileparsing):
     def column(self,matrix, i):
         return [row[i] for row in matrix]
 
-
     def plotFile(self,file_path,file_name):
         file = open(file_path,"r")
         array_of_nums = []
         # name = []
         for line in file:
-            if "LotID" in line:
-                name = line.split(" ");
-                if name[1]!="":
-                    name[1]= cleanString(name[1])
+            if 'FileTimestamp' in line:
+                timestamp = line[14:-1]
+                timestamp = cleanString(timestamp)
             if 'DefectList' in line:
                 for line in file:
                     if 'SummarySpec' in line:
@@ -107,9 +105,9 @@ class Server(fileparsing):
         frame1.axes.yaxis.set_ticklabels([])
         file_name= file_name.replace(".txt","")
         my_path = os.path.abspath(__file__)
-        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",name[1])
+        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",timestamp)
         plt.savefig('{}.png'.format(plot_name))
-        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/temp/",name[1])
+        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/temp/",timestamp)
         plt.savefig('{}.png'.format(plot_name))
         plt.close()
         return plot_name
@@ -142,10 +140,18 @@ class Server(fileparsing):
 
             data = self.connection.recv(1024)
             data_decoded = data.decode()
-
-            for filename in os.listdir(dir_path):
-                training_set = os.path.join(os.getcwd(), "training_set/"+data_decoded)
-                shutil.copy(dir_path+filename,training_set)
+            corrections = data_decoded
+            print("Got Here")
+            while True:
+                data = self.connection.recv(1024)
+                data_decoded = data.decode()
+                print(data_decoded)
+                if not data:
+                    print ("EXITEDDD")
+                    break;
+            # for filename in os.listdir(dir_path):
+            #     training_set = os.path.join(os.getcwd(), "training_set/"+data_decoded)
+            #     shutil.copy(dir_path+filename,training_set)
             return True;
         except Exception as e:
             print(e)
@@ -235,7 +241,6 @@ class Server(fileparsing):
         dir_path = os.path.join(os.getcwd(), "input_files/")
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt") :
-                print(dir_path+filename)
                 image_path = self.plotFile(dir_path+ filename,filename)
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
@@ -257,8 +262,8 @@ class Server(fileparsing):
                 classifier=model_from_json(loaded_model_json)
                 classifier.load_weights("model.h5")
                 result = classifier.predict(test_image)
-                lotId = filename.replace(".png","")
-                classifications.append([self.prediction(result),lotId])
+                timestamp = filename.replace(".png","")
+                classifications.append([self.prediction(result),timestamp])
 
         #adding the classification to the wafer mappings
         for classification in classifications:

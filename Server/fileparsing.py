@@ -34,8 +34,9 @@ class fileparsing:
                 try:
                     self.wafer = wafermappingsignature()
                     for line in self.fileDescriptor:
-                        if 'File Timestamp' in line:
+                        if 'FileTimestamp' in line:
                             timestamp = line[14:-1]
+                            timestamp = cleanString(timestamp)
                             self.wafer.addTimeStamp(timestamp)
                         elif 'InspectionStationID' in line:
                             inspectionstationid = line[20:-1]
@@ -122,11 +123,11 @@ class fileparsing:
         deleteFiles(temp_dir_path)
 
         for wafer in self.wafermappings:
-            lotId = wafer.lotid.replace(";","")
-            f=open(os.path.join(dir_path, lotId+".txt"),'w')
+            timestamp = wafer.filetimestamp
+            f=open(os.path.join(dir_path, timestamp+".txt"),'w')
             f.write(str(wafer))
             f.close()
-            f1=open(os.path.join(temp_dir_path, lotId+".txt"),'w')
+            f1=open(os.path.join(temp_dir_path, timestamp+".txt"),'w')
             f1.write(str(wafer))
             f1.close()
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
@@ -134,8 +135,8 @@ class fileparsing:
     def addClassfication(self, classification):
         print (classification)
         for wafer in self.wafermappings:
-            print("CLASSIFICATION" + wafer.lotid, classification[1])
-            if (wafer.lotid==classification[1]):
+            print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
+            if (wafer.filetimestamp==classification[1]):
                 wafer.addClassfication(classification[0])
 
     def sendReport(self, i):
