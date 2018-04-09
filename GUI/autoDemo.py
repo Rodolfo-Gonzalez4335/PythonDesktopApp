@@ -5,6 +5,8 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt, QLine
 import socket
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 
@@ -28,6 +30,10 @@ class App(QWidget):
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
 
+        ## show plot button attributes
+        self.showPlotUpload = QPushButton("Show Plot", self)
+        self.showPlotUpload.move(200, 145)
+        self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
 
         #App components
         self.title = QLabel("<h1>\t\t\t Wafer Map Signature Tool</h1>", self)
@@ -38,16 +44,16 @@ class App(QWidget):
         self.fileNameBox = QLineEdit(self)
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(300)
-        
+
         self.verticalLine = self.verticalFunc()
-        
+
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
         self.consoleField.setFixedSize(820,150)
-        
+
         self.comboBox = QComboBox(self)
         self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
-        
+
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
@@ -66,7 +72,7 @@ class App(QWidget):
         self.fileNameBox.move(120, 80)
         self.inputButton.move(430, 75)
         self.txtType.move(120, 110)
-        self.uploadButton.move(430, 110)
+        self.uploadButton.move(300, 145)
         self.printButton.move(40, 300)
         self.trainButton.move(200, 300)
         self.connectButton.move(300, 300)
@@ -74,7 +80,7 @@ class App(QWidget):
         self.correcTitle.move(620, 60)
         self.comboBox.move(630, 120)
         self.userCorrect.move(630, 150)
-        
+
 
         #Buttons Action
         self.inputButton.clicked.connect(self.openFileNamesDialog)
@@ -90,6 +96,34 @@ class App(QWidget):
         self.consoleOutput()
         self.setWindowTitle("Senior Project Tool")
         self.show()
+
+    ## show plot functions
+
+    def showPlotUploadFunc(self):
+        if len(self.filenames[0]) > 1:
+            self.outputReady = "Choose only one file to plot"
+            self.consoleOutput()
+        else:
+            self.fileNameBox.setText("")
+            f = open(str(self.filenames[0][0]), 'r')
+            x = []
+            y = []
+            for line in f:
+                if "DefectList" in line:
+                    for line in f:
+                        if "SummarySpec" in line:
+                            break
+                        linelist = line.strip(' ').split(' ')
+                        x.append(float(linelist[1]) + (float(linelist[3])*1000))
+                        y.append(float(linelist[2]) + (float(linelist[4])*1000))
+            plt.figure(figsize = (10, 10))
+            plt.scatter(x, y)
+            frame1 = plt.gca()
+            frame1.axes.xaxis.set_ticklabels([])
+            frame1.axes.yaxis.set_ticklabels([])
+            plt.xlabel("x")
+            plt.ylabel("y")
+            plt.show()
 
 
     def sendFilesToServer(self, fileName):
@@ -141,8 +175,8 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            #self.server_address = ("localhost", 10000)
-            self.server_address = ("10.145.250.235", 10000)
+            self.server_address = ("localhost", 10000)
+            #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
@@ -170,7 +204,7 @@ class App(QWidget):
         except:
             self.outputReady = "Printing failed"
             self.consoleOutput()
-                
+
 
     def trainMachine(self):
         try:
@@ -196,7 +230,7 @@ class App(QWidget):
             self.consoleOutput()
         except:
             pass
-                
+
     def checkConnection(self):
         try:
             self.isItTrained()
@@ -238,23 +272,23 @@ class App(QWidget):
     def recv_timeout(self,timeout=2):
         #make socket non blocking
         self.sock.setblocking(0)
-        
-    
+
+
         #total data partwise in an array
         total_data=[];
         data='';
-    
+
         #beginning time
         begin=time.time()
         while 1:
             #if you got some data, then break after timeout
             if total_data and time.time()-begin > timeout:
                 break
-        
+
             #if you got no data at all, wait a little longer, twice the timeout
             elif time.time()-begin > timeout*2:
                 break
-        
+
             #recv something
             try:
                 data = self.sock.recv(1024)
@@ -272,7 +306,7 @@ class App(QWidget):
         return (total_data)
 
 if __name__ == '__main__':
-    
+
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
