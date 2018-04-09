@@ -17,7 +17,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 from datetime import datetime
 import shutil
-from globalfunctions import deleteFiles
+from globalfunctions import deleteFiles,cleanString
 
 class Server(fileparsing):
 
@@ -67,40 +67,6 @@ class Server(fileparsing):
     def column(self,matrix, i):
         return [row[i] for row in matrix]
 
-    def cleanString(self, incomingString):
-        newstring = incomingString
-        newstring = newstring.replace("!","")
-        newstring = newstring.replace("@","")
-        newstring = newstring.replace("#","")
-        newstring = newstring.replace("$","")
-        newstring = newstring.replace("%","")
-        newstring = newstring.replace("^","")
-        newstring = newstring.replace("&","and")
-        newstring = newstring.replace("*","")
-        newstring = newstring.replace("(","")
-        newstring = newstring.replace(")","")
-        newstring = newstring.replace("+","")
-        newstring = newstring.replace("=","")
-        newstring = newstring.replace("?","")
-        newstring = newstring.replace("\'","")
-        newstring = newstring.replace("\"","")
-        newstring = newstring.replace("\n","")
-        newstring = newstring.replace("\t","")
-        newstring = newstring.replace("{","")
-        newstring = newstring.replace("}","")
-        newstring = newstring.replace("[","")
-        newstring = newstring.replace("]","")
-        newstring = newstring.replace("<","")
-        newstring = newstring.replace(">","")
-        newstring = newstring.replace("~","")
-        newstring = newstring.replace("`","")
-        newstring = newstring.replace(":","")
-        newstring = newstring.replace(";","")
-        newstring = newstring.replace("|","")
-        newstring = newstring.replace("\\","")
-        newstring = newstring.replace("/","")
-        newstring = newstring.replace(" ","")
-        return newstring
 
     def plotFile(self,file_path,file_name):
         file = open(file_path,"r")
@@ -110,7 +76,7 @@ class Server(fileparsing):
             if "LotID" in line:
                 name = line.split(" ");
                 if name[1]!="":
-                    name[1]= self.cleanString(name[1])
+                    name[1]= cleanString(name[1])
             if 'DefectList' in line:
                 for line in file:
                     if 'SummarySpec' in line:

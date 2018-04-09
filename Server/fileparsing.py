@@ -10,7 +10,7 @@ from wafermappingsignature import wafermappingsignature
 import sys
 import os
 from datetime import datetime
-from globalfunctions import deleteFiles
+from globalfunctions import deleteFiles,cleanString
 
 class fileparsing:
 
@@ -42,8 +42,7 @@ class fileparsing:
                             self.wafer.addInpectionStationID(inspectionstationid)
                         elif 'LotID' in line:
                             lotid = line[6:-1]
-                            lotid= lotid.replace("\"","")
-                            lotid= lotid.replace(";","")
+                            lotid= cleanString(lotid)
                             self.wafer.addLotID(lotid)
                         elif 'SampleSize' in line:
                             samplesize = line[11:-1]
