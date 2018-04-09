@@ -23,8 +23,8 @@ class Server(fileparsing):
     def __init__(self):
         # self.training()
         self.host = gethostbyname( '0.0.0.0' )
-        # self.server_address = ("localhost", 10000)
-        self.server_address = (self.host, 10000)
+        self.server_address = ("localhost", 10000)
+        # self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -148,7 +148,7 @@ class Server(fileparsing):
         return plot_name
 
     def sendReport(self):
-        directory_path = os.path.join(os.getcwd(), "Report/")
+        directory_path = os.path.join(os.getcwd(), "Report/temp")
         # print(directory_path)
         for filename in os.listdir(directory_path):
             # print(filename)
