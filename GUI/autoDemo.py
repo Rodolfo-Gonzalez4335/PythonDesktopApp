@@ -211,7 +211,6 @@ class App(QWidget):
             self.ConnectToServer()
             self.sock.sendto("Correction".encode('utf-8'), self.server_address)
             time.sleep(0.1)
-            print("got here")
             self.sock.sendto(self.comboBox.currentText().encode('utf-8').lower(), self.server_address)
             data = self.sock.recv(1024)
             if data:
@@ -221,8 +220,7 @@ class App(QWidget):
                 self.hasCorrected = "Your correction failed"
                 self.consoleOutput()
             self.DisconnectToServer()
-        except Exception as e:
-            print(e)
+        except:
             self.hasCorrected = "Your correction failed"
             self.consoleOutput()
 
