@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox, QStyleFactory
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt, QLine
 import socket
@@ -90,7 +90,9 @@ class App(QWidget):
         self.connectButton.clicked.connect(self.checkConnection)
         self.userCorrect.clicked.connect(self.uCorrection)
 
-        self.setFixedSize(820, 600)
+#        self.setFixedSize(820, 600)
+
+        self.resize(820, 600)
 
         #Layout
         self.consoleOutput()
@@ -173,7 +175,7 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("localhost", 10000)
+            self.server_address = ("10.145.115.181", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
@@ -314,5 +316,7 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    app.setStyle(QStyleFactory.create('Windows'))
+    app.setPalette(QApplication.style().standardPalette())
     ex = App()
     sys.exit(app.exec_())
