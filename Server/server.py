@@ -22,7 +22,7 @@ from globalfunctions import deleteFiles,cleanString
 class Server(fileparsing):
 
     def __init__(self):
-        self.host = gethostbyname( '0.0.0.0' )
+        # self.host = gethostbyname( '0.0.0.0' )
         self.server_address = ("localhost", 10000)
         # self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
@@ -134,13 +134,12 @@ class Server(fileparsing):
                 return True
         return False
 
-    def correction(self):
+    def correction(self, data_decoded):
         try:
             dir_path = os.path.join(os.getcwd(), "classified_images/temp/")
 
-            data = self.connection.recv(1024)
-            data_decoded = data.decode()
-            corrections = data_decoded
+            corrections = data_decoded.split("EndOfFile")
+            print(data_decoded)
             print("Got Here")
             while True:
                 data = self.connection.recv(1024)
@@ -156,6 +155,7 @@ class Server(fileparsing):
         except Exception as e:
             print(e)
             return False
+
     def receiveAndWriteFiles(self, data,data_decoded):
         try:
             temp_dir_path = os.path.join(os.getcwd(), "input_files")
@@ -224,10 +224,11 @@ class Server(fileparsing):
                 pass
             elif "Correction" in data_decoded:
                 print("Doing a correction")
-                if (self.correction()):
+                if (self.correction(data_decoded)):
                     self.connection.sendall("Succesfully made correction".encode("utf-8"))
                 else:
                     self.connection.sendall("Failed to send correction".encode("utf-8"))
+                self.connection.close()
             else:
                 self.receiveAndWriteFiles(data,data_decoded)
                 self.connection.close()
@@ -248,7 +249,7 @@ class Server(fileparsing):
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         dir_path = os.path.join(os.getcwd(),"classified_images/")
         classifications=[]
-
+        deleteFiles(dir_path)
 
         for filename in os.listdir(dir_path):
             if filename.endswith(".png") :
