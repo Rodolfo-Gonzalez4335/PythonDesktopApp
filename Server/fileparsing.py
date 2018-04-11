@@ -132,6 +132,7 @@ class fileparsing:
             # print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
             if (wafer.filetimestamp==classification[1]):
                 wafer.addClassfication(classification[0])
+                return
 
     def sendReport(self, i):
         if i < len(self.wafermappings):

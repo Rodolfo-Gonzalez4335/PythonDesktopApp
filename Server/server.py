@@ -21,9 +21,9 @@ from globalfunctions import deleteFiles,cleanString,moveFilesToFilePath
 class Server(fileparsing):
 
     def __init__(self):
-        # self.host = gethostbyname( '0.0.0.0' )
-        self.server_address = ("localhost", 10000)
-        # self.server_address = (self.host, 10000)
+        self.host = gethostbyname( '0.0.0.0' )
+        # self.server_address = ("localhost", 10000)
+        self.server_address = (self.host, 10000)
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(self.server_address)
@@ -67,47 +67,50 @@ class Server(fileparsing):
         return [row[i] for row in matrix]
 
     def plotFile(self,file_path,file_name):
-        file = open(file_path,"r")
-        array_of_nums = []
-        # name = []
-        for line in file:
-            if 'FileTimestamp' in line:
-                timestamp = line[14:-1]
-                timestamp = cleanString(timestamp)
-            if 'DefectList' in line:
-                for line in file:
-                    if 'SummarySpec' in line:
-                        break
-                    nums = []
-                    for num in line.strip(' ').split(' '):
-                        try:
-                            nums.append(float(num))
-                        except ValueError:
-                            if num!="":
-                                num = num.replace(';','')
+        try:
+            file = open(file_path,"r")
+            array_of_nums = []
+            # name = []
+            for line in file:
+                if 'FileTimestamp' in line:
+                    timestamp = line[14:-1]
+                    timestamp = cleanString(timestamp)
+                if 'DefectList' in line:
+                    for line in file:
+                        if 'SummarySpec' in line:
+                            break
+                        nums = []
+                        for num in line.strip(' ').split(' '):
+                            try:
                                 nums.append(float(num))
-                                pass
-                    array_of_nums.append(nums)
-                continue
-        file.close()
-        x_offs = np.array(self.column(array_of_nums,3))
-        y_offs = np.array(self.column(array_of_nums,4))
-        x_locs = np.array(self.column(array_of_nums,1))
-        y_locs = np.array(self.column(array_of_nums,2))
-        x = np.add(x_locs, 1000*x_offs)
-        y = np.add(y_locs, 1000*y_offs)
-        # Plot a scatter plot
-        plt.figure(figsize=(8, 6))
-        plt.scatter(x,y)
-        frame1 = plt.gca()
-        frame1.axes.xaxis.set_ticklabels([])
-        frame1.axes.yaxis.set_ticklabels([])
-        file_name= file_name.replace(".txt","")
-        my_path = os.path.abspath(__file__)
-        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",timestamp)
-        plt.savefig('{}.png'.format(plot_name))
-        plt.close()
-        return plot_name
+                            except ValueError:
+                                if num!="":
+                                    num = num.replace(';','')
+                                    nums.append(float(num))
+                                    pass
+                        array_of_nums.append(nums)
+                    continue
+            file.close()
+            x_offs = np.array(self.column(array_of_nums,3))
+            y_offs = np.array(self.column(array_of_nums,4))
+            x_locs = np.array(self.column(array_of_nums,1))
+            y_locs = np.array(self.column(array_of_nums,2))
+            x = np.add(x_locs, 1000*x_offs)
+            y = np.add(y_locs, 1000*y_offs)
+            # Plot a scatter plot
+            plt.figure(figsize=(8, 6))
+            plt.scatter(x,y)
+            frame1 = plt.gca()
+            frame1.axes.xaxis.set_ticklabels([])
+            frame1.axes.yaxis.set_ticklabels([])
+            file_name= file_name.replace(".txt","")
+            # my_path = os.path.abspath(__file__)
+            plot_name = os.path.join(os.getcwd(), "classified_images/",timestamp)
+            plt.savefig('{}.png'.format(plot_name))
+            plt.close()
+            return plot_name
+        except Exception as e:
+            print (e)
 
     def sendReport(self):
         directory_path = os.path.join(os.getcwd(), "Report/")
@@ -135,8 +138,6 @@ class Server(fileparsing):
         try:
             dir_path = os.path.join(os.getcwd(), "input_files")
             deleteFiles(dir_path)
-
-
 
             data = self.connection.recv(1024)
             data_decoded = data.decode()
@@ -216,7 +217,7 @@ class Server(fileparsing):
             elif "Correction" in data_decoded:
                 data = self.connection.recv(1024)
                 data_decoded = data.decode()
-                print(data_decoded)
+                # print(data_decoded)
                 if (self.correction(data_decoded)):
                     self.connection.sendall("Succesfully made correction".encode("utf-8"))
                 else:
@@ -226,7 +227,7 @@ class Server(fileparsing):
                 imagesPath =os.path.join(os.getcwd(), "classified_images/")
                 movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
                 moveFilesToFilePath(imagesPath,movePath)
-                print("Connection Closed")
+                # print("Connection Closed")
             else:
                 self.receiveAndWriteFiles(data,data_decoded)
                 self.connection.close()
@@ -237,40 +238,47 @@ class Server(fileparsing):
 
     def createImagesFromTxt(self):
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-        dir_path = os.path.join(os.getcwd(), "input_files/")
-        for filename in os.listdir(dir_path):
-            if filename.endswith(".txt") :
-                image_path = self.plotFile(dir_path+ filename,filename)
-        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        try:
+            dir_path = os.path.join(os.getcwd(), "input_files/")
+            # print("Creating images")
+            for filename in os.listdir(dir_path):
+                # print("Plotting " + filename)
+                if filename.endswith(".txt") :
+                    image_path = self.plotFile(dir_path+ filename,filename)
+            # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        except Exception as e:
+            print (e)
 
     def classifyDefects(self):
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-        dir_path = os.path.join(os.getcwd(),"classified_images/")
-        classifications=[]
+        try:
+            dir_path = os.path.join(os.getcwd(),"classified_images/")
+            classifications=[]
 
-        for filename in os.listdir(dir_path):
-            if filename.endswith(".png") :
-                test_image = image.load_img("classified_images/"+filename, target_size = (576, 432))
-                test_image = image.img_to_array(test_image)
-                # print(training_set.class_indices)
-                test_image = np.expand_dims(test_image, axis = 0)
-                json_file = open('model.json','r')
-                loaded_model_json = json_file.read()
-                json_file.close()
-                classifier=model_from_json(loaded_model_json)
-                classifier.load_weights("model.h5")
-                result = classifier.predict(test_image)
-                timestamp = filename.replace(".png","")
-                classifications.append([self.prediction(result),timestamp])
+            for filename in os.listdir(dir_path):
+                if filename.endswith(".png") :
+                    test_image = image.load_img("classified_images/"+filename, target_size = (576, 432))
+                    test_image = image.img_to_array(test_image)
+                    # print(training_set.class_indices)
+                    test_image = np.expand_dims(test_image, axis = 0)
+                    json_file = open('model.json','r')
+                    loaded_model_json = json_file.read()
+                    json_file.close()
+                    classifier=model_from_json(loaded_model_json)
+                    classifier.load_weights("model.h5")
+                    result = classifier.predict(test_image)
+                    timestamp = filename.replace(".png","")
+                    classifications.append([self.prediction(result),timestamp])
 
-        #adding the classification to the wafer mappings
-        for classification in classifications:
-            self.wafermappings.addClassfication(classification)
+            #adding the classification to the wafer mappings
+            for classification in classifications:
+                self.wafermappings.addClassfication(classification)
 
-        #wafermappings is the data structure that has all the signatures
-        self.wafermappings.saveWaferMappings()
-        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-
+            #wafermappings is the data structure that has all the signatures
+            self.wafermappings.saveWaferMappings()
+            # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        except Exception as e:
+            print(e)
     def prediction(self,result):
         if result[0][0] == 0:
             return 'edge_local'
