@@ -21,6 +21,7 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
+        QApplication.setStyle("macintosh")
         self.initUI()
 
     def initUI(self):
