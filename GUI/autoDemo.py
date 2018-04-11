@@ -314,6 +314,7 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    app.setStyle(QStyleFactory.create("macintosh"))
+    app.setStyle(QStyleFactory.create('Windows'))
+    app.setPalette(QApplication.style().standardPalette())
     ex = App()
     sys.exit(app.exec_())
