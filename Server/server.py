@@ -16,8 +16,7 @@ from keras.layers import Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 from datetime import datetime
-import shutil
-from globalfunctions import deleteFiles,cleanString
+from globalfunctions import deleteFiles,cleanString,moveFilesToFilePath
 
 class Server(fileparsing):
 
@@ -107,13 +106,11 @@ class Server(fileparsing):
         my_path = os.path.abspath(__file__)
         plot_name = os.path.join(os.path.dirname(my_path), "classified_images/",timestamp)
         plt.savefig('{}.png'.format(plot_name))
-        plot_name = os.path.join(os.path.dirname(my_path), "classified_images/temp/",timestamp)
-        plt.savefig('{}.png'.format(plot_name))
         plt.close()
         return plot_name
 
     def sendReport(self):
-        directory_path = os.path.join(os.getcwd(), "Report/temp")
+        directory_path = os.path.join(os.getcwd(), "Report/")
         # print(directory_path)
         for filename in os.listdir(directory_path):
             # print(filename)
@@ -136,32 +133,24 @@ class Server(fileparsing):
 
     def correction(self, data_decoded):
         try:
-            dir_path = os.path.join(os.getcwd(), "classified_images/temp/")
+            dir_path = os.path.join(os.getcwd(), "input_files")
+            deleteFiles(dir_path)
 
-            corrections = data_decoded.split("EndOfFile")
-            print(data_decoded)
-            print("Got Here")
-            while True:
-                data = self.connection.recv(1024)
-                data_decoded = data.decode()
-                print(data_decoded)
-                if not data:
-                    print ("EXITEDDD")
-                    break;
-            # for filename in os.listdir(dir_path):
-            #     training_set = os.path.join(os.getcwd(), "training_set/"+data_decoded)
-            #     shutil.copy(dir_path+filename,training_set)
-            return True;
+
+
+            data = self.connection.recv(1024)
+            data_decoded = data.decode()
+            self.receiveAndWriteFiles(data,data_decoded)
+            return True
+
         except Exception as e:
             print(e)
             return False
 
     def receiveAndWriteFiles(self, data,data_decoded):
         try:
-            temp_dir_path = os.path.join(os.getcwd(), "input_files")
-            deleteFiles(temp_dir_path)
-            temp_dir_path = os.path.join(os.getcwd(), "classified_images/temp")
-            deleteFiles(temp_dir_path)
+            dir_path = os.path.join(os.getcwd(), "input_files")
+            deleteFiles(dir_path)
 
             i=1
             dir_path = os.path.join(os.getcwd(), "input_files")
@@ -174,7 +163,8 @@ class Server(fileparsing):
                     f.close()
                     self.wafermappings.parse()
                     break
-
+                if "END OF FILE SENDING" in data_decoded:
+                    break
                 # case where multiple files are sent in one data package
                 if f.closed and data_decoded!="":
                     f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
@@ -188,7 +178,7 @@ class Server(fileparsing):
                     f.write(first_and_second_file[0])
                     f.close()
                     if  "FileVersion" in first_and_second_file[1]:
-                        f=open(os.path.join(dir_path+"/temp", 'file_'+ str(i)+".txt"),'w')
+                        f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                         i= i+1
                         f.write(first_and_second_file[1])
 
@@ -196,9 +186,10 @@ class Server(fileparsing):
                     f.write(data_decoded)
                 data = self.connection.recv(1024)
                 data_decoded = data.decode()
-
+            return True
         except Exception as e:
             print (e)
+            return False
 
     def readCommands(self):
         while True:
@@ -223,12 +214,19 @@ class Server(fileparsing):
             elif not data:
                 pass
             elif "Correction" in data_decoded:
-                print("Doing a correction")
+                data = self.connection.recv(1024)
+                data_decoded = data.decode()
+                print(data_decoded)
                 if (self.correction(data_decoded)):
                     self.connection.sendall("Succesfully made correction".encode("utf-8"))
                 else:
                     self.connection.sendall("Failed to send correction".encode("utf-8"))
                 self.connection.close()
+                self.createImagesFromTxt()
+                imagesPath =os.path.join(os.getcwd(), "classified_images/")
+                movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
+                moveFilesToFilePath(imagesPath,movePath)
+                print("Connection Closed")
             else:
                 self.receiveAndWriteFiles(data,data_decoded)
                 self.connection.close()
@@ -249,7 +247,6 @@ class Server(fileparsing):
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         dir_path = os.path.join(os.getcwd(),"classified_images/")
         classifications=[]
-        deleteFiles(dir_path)
 
         for filename in os.listdir(dir_path):
             if filename.endswith(".png") :

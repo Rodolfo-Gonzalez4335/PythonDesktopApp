@@ -22,7 +22,7 @@ class fileparsing:
         self.wafer = wafermappingsignature()
 
     def parse(self):
-        print("got in")
+        # print("got in")
         i = 1
         dir_path = os.path.join(os.getcwd(), "input_files")
         for filename in os.listdir(dir_path):
@@ -118,24 +118,18 @@ class fileparsing:
 
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")
-        temp_dir_path = os.path.join(os.getcwd(), "Report/temp")
-        #clearing temp folder
-        deleteFiles(temp_dir_path)
 
         for wafer in self.wafermappings:
             timestamp = wafer.filetimestamp
             f=open(os.path.join(dir_path, timestamp+".txt"),'w')
             f.write(str(wafer))
             f.close()
-            f1=open(os.path.join(temp_dir_path, timestamp+".txt"),'w')
-            f1.write(str(wafer))
-            f1.close()
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
     def addClassfication(self, classification):
-        print (classification)
+        # print (classification)
         for wafer in self.wafermappings:
-            print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
+            # print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
             if (wafer.filetimestamp==classification[1]):
                 wafer.addClassfication(classification[0])
 

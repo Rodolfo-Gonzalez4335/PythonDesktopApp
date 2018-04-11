@@ -1,4 +1,5 @@
 import os
+import shutil
 
 def deleteFiles(path):
     for file in os.listdir(path):
@@ -9,6 +10,10 @@ def deleteFiles(path):
         except Exception as e:
             print(e)
 
+def moveFilesToFilePath(path, newPath):
+    for filename in os.listdir(path):
+         training_set = os.path.join(os.getcwd(), newPath)
+         shutil.copy(path+filename,training_set)
 def cleanString(incomingString):
     newstring = incomingString
     newstring = newstring.replace("!","")

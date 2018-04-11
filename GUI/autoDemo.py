@@ -125,7 +125,6 @@ class App(QWidget):
             plt.ylabel("y")
             plt.show()
 
-
     def sendFilesToServer(self, fileName):
         f = open(fileName,'rb')
         while True:
@@ -163,7 +162,6 @@ class App(QWidget):
         toto.setFrameShadow(QFrame.Sunken)
         return toto
 
-
     def DisconnectToServer(self):
         self.sock.close()
         self.serverConnection = "You are now disconnected from the server"
@@ -185,7 +183,6 @@ class App(QWidget):
             self.serverConnection = "Server is not connected"
             self.consoleOutput()
 
-
     def printReport(self):
         try:
             self.ConnectToServer()
@@ -204,7 +201,6 @@ class App(QWidget):
         except:
             self.outputReady = "Printing failed"
             self.consoleOutput()
-
 
     def trainMachine(self):
         try:
@@ -243,9 +239,17 @@ class App(QWidget):
     def uCorrection(self):
         try:
             self.ConnectToServer()
-            self.sock.sendto("Correction".encode('utf-8'), self.server_address)
+            self.sock.sendto(("Correction "+"EndOfCommand").encode('utf-8'), self.server_address)
             time.sleep(0.1)
             self.sock.sendto(self.comboBox.currentText().encode('utf-8').lower(), self.server_address)
+            self.fileNameBox.setText("")
+            time.sleep(0.1)
+            # f = open(str(self.filenames[0][0]), 'r')
+            for i in range(0, len(self.filenames[0])):
+                self.sendFilesToServer(self.filenames[0][i])
+                print(i)
+            time.sleep(0.1)
+            self.sock.sendall("END OF FILE SENDING".encode())
             data = self.sock.recv(1024)
             if data:
                 self.hasCorrected = data.decode()
@@ -254,9 +258,11 @@ class App(QWidget):
                 self.hasCorrected = "Your correction failed"
                 self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print (e)
             self.hasCorrected = "Your correction failed"
             self.consoleOutput()
+            self.DisconnectToServer()
 
     def consoleOutput(self):
         self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady + "\n" + self.hasCorrected)
