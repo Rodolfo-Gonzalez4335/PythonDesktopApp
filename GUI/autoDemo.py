@@ -90,9 +90,8 @@ class App(QWidget):
         self.connectButton.clicked.connect(self.checkConnection)
         self.userCorrect.clicked.connect(self.uCorrection)
 
-#        self.setFixedSize(820, 600)
+        self.setFixedSize(820, 600)
 
-        self.resize(820, 600)
 
         #Layout
         self.consoleOutput()
