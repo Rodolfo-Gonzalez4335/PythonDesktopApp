@@ -126,12 +126,12 @@ class fileparsing:
             f.close()
         # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
-    def addClassfication(self, classification):
+    def addclassiFication(self, classification):
         # print (classification)
         for wafer in self.wafermappings:
             # print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
             if (wafer.filetimestamp==classification[1]):
-                wafer.addClassfication(classification[0])
+                wafer.addclassiFication(classification[0])
                 return
 
     def sendReport(self, i):
@@ -139,3 +139,4 @@ class fileparsing:
             return str(self.wafermappings[i])
         else:
             return "DONE"
+classiFication

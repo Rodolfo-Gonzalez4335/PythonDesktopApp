@@ -272,7 +272,7 @@ class Server(fileparsing):
 
             #adding the classification to the wafer mappings
             for classification in classifications:
-                self.wafermappings.addClassfication(classification)
+                self.wafermappings.addclassiFication(classification)
 
             #wafermappings is the data structure that has all the signatures
             self.wafermappings.saveWaferMappings()
