@@ -57,7 +57,7 @@ class App(QWidget):
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
-        self.printButton =  QPushButton("Print Report", self)
+        self.printButton =  QPushButton("Print Reports", self)
         self.uploadButton = QPushButton("Upload", self)
         self.trainButton = QPushButton("Train", self)
         self.connectButton = QPushButton("Check Connection", self)
@@ -316,6 +316,5 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     app.setStyle(QStyleFactory.create('Windows'))
-    app.setPalette(QApplication.style().standardPalette())
     ex = App()
     sys.exit(app.exec_())
