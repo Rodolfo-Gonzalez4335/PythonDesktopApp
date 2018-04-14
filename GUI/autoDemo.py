@@ -26,9 +26,9 @@ class App(QWidget):
         else:
             self.windowsGui()
 
-def windowsGui(self):
-    #background image
-    label = QLabel(self)
+    def windowsGui(self):
+        #background image
+        label = QLabel(self)
         pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
