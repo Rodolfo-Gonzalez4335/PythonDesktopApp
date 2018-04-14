@@ -21,8 +21,86 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
-        print(sys.platform)
-        self.initUI()
+        if sys.platform == "darwin":
+            self.initUI()
+        else:
+            self.windowsGui()
+
+def windowsGui(self):
+    #background image
+    label = QLabel(self)
+        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
+        label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+        
+        ## show plot button attributes
+        self.showPlotUpload = QPushButton("Show Plot", self)
+        self.showPlotUpload.move(200, 145)
+        self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
+        
+        #App components
+        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Classification Tool</h1>", self)
+        self.line = QLabel("<b>_______________________________________________________________________________________________________________________________________________________________________________________________________________</b>", self)
+        self.fileName = QLabel("<b>File Name: </b>", self)
+        self.txtType = QLabel("<b>.txt files only </b>", self)
+        self.correcTitle = QLabel("<h3>User Correction: </h3>", self)
+        self.fileNameBox = QLineEdit(self)
+        self.fileNameBox.setReadOnly(True)
+        self.fileNameBox.setFixedWidth(800)
+        
+        self.verticalLine = self.verticalFunc()
+        
+        self.consoleField = QTextEdit(self)
+        self.consoleField.setReadOnly(True)
+        self.consoleField.setFixedSize(2100,300)
+        
+        self.comboBox = QComboBox(self)
+        self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
+        
+        
+        #Buttons Name
+        self.inputButton = QPushButton("Browse", self)
+        self.printButton =  QPushButton("Print Reports", self)
+        self.uploadButton = QPushButton("Upload", self)
+        self.trainButton = QPushButton("Train", self)
+        self.connectButton = QPushButton("Check Connection", self)
+        self.userCorrect = QPushButton("Correction", self)
+        
+        #Title placement
+        self.title.move(15,10)
+        self.line.move(10, 35)
+        
+        #Components placement
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(120, 80)
+        self.inputButton.move(430, 75)
+        self.txtType.move(120, 110)
+        self.uploadButton.move(300, 145)
+        self.printButton.move(40, 300)
+        self.trainButton.move(200, 300)
+        self.connectButton.move(300, 300)
+        self.consoleField.move(0, 1200)
+        self.correcTitle.move(620, 60)
+        self.comboBox.move(630, 120)
+        self.userCorrect.move(630, 150)
+        
+        
+        #Buttons Action
+        self.inputButton.clicked.connect(self.openFileNamesDialog)
+        self.uploadButton.clicked.connect(self.uploadFunc)
+        self.printButton.clicked.connect(self.printReport)
+        self.trainButton.clicked.connect(self.trainMachine)
+        self.connectButton.clicked.connect(self.checkConnection)
+        self.userCorrect.clicked.connect(self.uCorrection)
+        
+        #window size
+        self.setFixedSize(2100, 1500)
+        
+        
+        #Layout
+        self.consoleOutput()
+        self.setWindowTitle("Senior Project Tool")
+        self.show()
 
     def initUI(self):
         #background image
