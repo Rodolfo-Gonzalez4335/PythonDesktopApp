@@ -21,6 +21,7 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
+        print(sys.platform)
         self.initUI()
 
     def initUI(self):
@@ -36,7 +37,7 @@ class App(QWidget):
         self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
 
         #App components
-        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Tool</h1>", self)
+        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Classification Tool</h1>", self)
         self.line = QLabel("<b>_______________________________________________________________________________________________________________________________________________________________________________________________________________</b>", self)
         self.fileName = QLabel("<b>File Name: </b>", self)
         self.txtType = QLabel("<b>.txt files only </b>", self)
@@ -315,6 +316,5 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    app.setStyle(QStyleFactory.create('Windows'))
     ex = App()
     sys.exit(app.exec_())
