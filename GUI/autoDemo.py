@@ -97,9 +97,9 @@ class App(QWidget):
         self.trainButton.move(360, 600)
         self.connectButton.move(560, 600)
         self.consoleField.move(0, 1200-self.y)
-        self.correcTitle.move(1450-(self.z*2), 60)
-        self.comboBox.move(1450-(self.z*2), 120)
-        self.userCorrect.move(1450-(self.z*2), 180)
+        self.correcTitle.move(1450-(self.z*3), 60)
+        self.comboBox.move(1450-(self.z*3), 120)
+        self.userCorrect.move(1450-(self.z*3), 180)
         
         
         #Buttons Action
