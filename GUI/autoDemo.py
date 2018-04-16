@@ -22,15 +22,24 @@ class App(QWidget):
         self.outputReady = ""
         self.hasCorrected = ""
         
+        self.x = 0
+        self.y = 0
+        self.z = 0
+        
         screen_resolution = app.desktop().screenGeometry()
-        self.width, self.height = screen_resolution.width(), screen_resolution.height()
+        width, height = screen_resolution.width(), screen_resolution.height()
         
         print(sys.platform)
-        print(self.width)
-        print(self.height)
+        print(width)
+        print(height)
         
         if sys.platform == "darwin":
             self.initUI()
+        elif width < 2100 and height < 1500:
+            self.x = 200
+            self.y = 600
+            self.z = 100
+            self.windowsGui()
         else:
             self.windowsGui()
 
@@ -60,7 +69,7 @@ class App(QWidget):
         
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
-        self.consoleField.setFixedSize(2100,300)
+        self.consoleField.setFixedSize(2100-self.x,300)
         
         self.comboBox = QComboBox(self)
         self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
@@ -87,10 +96,10 @@ class App(QWidget):
         self.printButton.move(160, 600)
         self.trainButton.move(360, 600)
         self.connectButton.move(560, 600)
-        self.consoleField.move(0, 1200)
-        self.correcTitle.move(1450, 60)
-        self.comboBox.move(1450, 120)
-        self.userCorrect.move(1450, 180)
+        self.consoleField.move(0, 1200-self.y)
+        self.correcTitle.move(1450-self.z, 60)
+        self.comboBox.move(1450-self.z, 120)
+        self.userCorrect.move(1450-self.z, 180)
         
         
         #Buttons Action
@@ -102,7 +111,7 @@ class App(QWidget):
         self.userCorrect.clicked.connect(self.uCorrection)
         
         #window size
-        self.setFixedSize(2100, 1500)
+        self.setFixedSize(2100-self.x, 1500-self.y)
         
         
         #Layout
@@ -363,9 +372,9 @@ class App(QWidget):
             y=y+1
 
     def verticalFuncWin(self):
-        x = 1400
+        x = 1400-self.x
         y = 60
-        while y < 1200:
+        while y < 1200-self.x:
             some = QLabel("<b>|</b>", self)
             some.move(x,y)
             y=y+1
