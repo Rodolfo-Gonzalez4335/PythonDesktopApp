@@ -46,10 +46,10 @@ class App(QWidget):
     def windowsGui(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
-        label.setPixmap(pixmap)
-        self.resize(pixmap.width(), pixmap.height())
-        
+#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
+#        label.setPixmap(pixmap)
+#        self.resize(pixmap.width(), pixmap.height())
+
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
         self.showPlotUpload.move(160, 145)
@@ -69,7 +69,7 @@ class App(QWidget):
         
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
-        self.consoleField.setFixedSize(2100-self.x,300)
+        self.consoleField.setFixedSize(2100-self.x,300-self.z)
         
         self.comboBox = QComboBox(self)
         self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
@@ -97,9 +97,9 @@ class App(QWidget):
         self.trainButton.move(360, 600)
         self.connectButton.move(560, 600)
         self.consoleField.move(0, 1200-self.y)
-        self.correcTitle.move(1450-self.z, 60)
-        self.comboBox.move(1450-self.z, 120)
-        self.userCorrect.move(1450-self.z, 180)
+        self.correcTitle.move(1450-(self.z*2), 60)
+        self.comboBox.move(1450-(self.z*2), 120)
+        self.userCorrect.move(1450-(self.z*2), 180)
         
         
         #Buttons Action
@@ -122,9 +122,9 @@ class App(QWidget):
     def initUI(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
-        label.setPixmap(pixmap)
-        self.resize(pixmap.width(), pixmap.height())
+#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
+#        label.setPixmap(pixmap)
+#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
