@@ -21,7 +21,13 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
+        
+        screen_resolution = app.desktop().screenGeometry()
+        self.width, self.height = screen_resolution.width(), screen_resolution.height()
+        
         print(sys.platform)
+        print(self.width)
+        print(self.height)
         
         if sys.platform == "darwin":
             self.initUI()
@@ -50,7 +56,7 @@ class App(QWidget):
         self.fileNameBox.setReadOnly(True)
         self.fileNameBox.setFixedWidth(800)
         
-        self.verticalLine = self.verticalFunc()
+        self.verticalLine = self.verticalFuncWin()
         
         self.consoleField = QTextEdit(self)
         self.consoleField.setReadOnly(True)
@@ -349,6 +355,14 @@ class App(QWidget):
         self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady + "\n" + self.hasCorrected)
 
     def verticalFunc(self):
+        x = 600
+        y = 45
+        while y < 450:
+            some = QLabel("<b>|</b>", self)
+            some.move(x,y)
+            y=y+1
+
+    def verticalFuncWin(self):
         x = 1400
         y = 60
         while y < 1200:
@@ -395,9 +409,5 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    screen_resolution = app.desktop().screenGeometry()
-    width, height = screen_resolution.width(), screen_resolution.height()
-    print(width)
-    print(height)
     ex = App()
     sys.exit(app.exec_())
