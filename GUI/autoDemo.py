@@ -348,9 +348,9 @@ class App(QWidget):
         self.consoleField.setText("Console: \n" + self.serverConnection + "\n" + self.trained + "\n" + self.outputReady + "\n" + self.hasCorrected)
 
     def verticalFunc(self):
-        x = 600
-        y = 45
-        while y < 450:
+        x = 1400
+        y = 60
+        while y < 1200:
             some = QLabel("<b>|</b>", self)
             some.move(x,y)
             y=y+1
