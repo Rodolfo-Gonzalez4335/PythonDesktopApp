@@ -29,13 +29,13 @@ class App(QWidget):
     def windowsGui(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
+        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
         label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
         
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
-        self.showPlotUpload.move(200, 145)
+        self.showPlotUpload.move(160, 145)
         self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
         
         #App components
@@ -72,17 +72,17 @@ class App(QWidget):
         
         #Components placement
         self.fileName.move(25, 80)
-        self.fileNameBox.move(120, 80)
-        self.inputButton.move(430, 75)
-        self.txtType.move(120, 110)
-        self.uploadButton.move(300, 145)
-        self.printButton.move(40, 300)
-        self.trainButton.move(200, 300)
-        self.connectButton.move(300, 300)
+        self.fileNameBox.move(160, 80)
+        self.inputButton.move(975, 75)
+        self.txtType.move(160, 110)
+        self.uploadButton.move(975, 145)
+        self.printButton.move(160, 600)
+        self.trainButton.move(360, 600)
+        self.connectButton.move(560, 600)
         self.consoleField.move(0, 1200)
-        self.correcTitle.move(620, 60)
-        self.comboBox.move(630, 120)
-        self.userCorrect.move(630, 150)
+        self.correcTitle.move(1450, 60)
+        self.comboBox.move(1450, 120)
+        self.userCorrect.move(1450, 180)
         
         
         #Buttons Action
@@ -229,7 +229,7 @@ class App(QWidget):
             f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
-            self.outputReady = "Your files are ready to be printed"
+            self.outputReady = "Your files are being processed..."
             self.consoleOutput()
             self.DisconnectToServer()
         except:
@@ -244,8 +244,6 @@ class App(QWidget):
 
     def DisconnectToServer(self):
         self.sock.close()
-        self.serverConnection = "You are now disconnected from the server"
-        self.consoleOutput()
 
     def ConnectToServer(self):
         try:
@@ -305,7 +303,8 @@ class App(QWidget):
                 self.trained = "Machine has not been trained yet"
             self.consoleOutput()
         except:
-            pass
+            self.serverConnection = "Server is not working"
+            self.consoleOutput()
 
     def checkConnection(self):
         try:
