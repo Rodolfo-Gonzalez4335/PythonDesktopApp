@@ -22,6 +22,7 @@ class App(QWidget):
         self.outputReady = ""
         self.hasCorrected = ""
         print(sys.platform)
+        
         if sys.platform == "darwin":
             self.initUI()
         else:
@@ -394,5 +395,9 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    screen_resolution = app.desktop().screenGeometry()
+    width, height = screen_resolution.width(), screen_resolution.height()
+    print(width)
+    print(height)
     ex = App()
     sys.exit(app.exec_())
