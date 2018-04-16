@@ -111,7 +111,7 @@ class App(QWidget):
         self.userCorrect.clicked.connect(self.uCorrection)
         
         #window size
-        self.setFixedSize(2100-self.x, 1500-self.y)
+        self.setFixedSize(2100-self.x, 1500-self.y-self.z)
         
         
         #Layout
