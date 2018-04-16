@@ -93,13 +93,13 @@ class App(QWidget):
         self.inputButton.move(975, 75)
         self.txtType.move(160, 110)
         self.uploadButton.move(975, 145)
-        self.printButton.move(160, 600)
-        self.trainButton.move(360, 600)
-        self.connectButton.move(560, 600)
+        self.printButton.move(160, 600-self.z)
+        self.trainButton.move(360, 600-self.z)
+        self.connectButton.move(560, 600-self.z)
         self.consoleField.move(0, 1200-self.y)
-        self.correcTitle.move(1450-(self.z*3), 60)
-        self.comboBox.move(1450-(self.z*3), 120)
-        self.userCorrect.move(1450-(self.z*3), 180)
+        self.correcTitle.move(1450-(self.z), 60)
+        self.comboBox.move(1450-(self.z), 120)
+        self.userCorrect.move(1450-(self.z), 180)
         
         
         #Buttons Action
@@ -111,7 +111,7 @@ class App(QWidget):
         self.userCorrect.clicked.connect(self.uCorrection)
         
         #window size
-        self.setFixedSize(2100-self.x, 1500-self.y-self.z)
+        self.setFixedSize(2100-self.x, 1500-self.y)
         
         
         #Layout
