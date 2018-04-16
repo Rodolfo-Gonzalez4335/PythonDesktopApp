@@ -21,6 +21,7 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
+        print(sys.platform)
         if sys.platform == "darwin":
             self.initUI()
         else:
