@@ -248,6 +248,9 @@ class App(QWidget):
                 self.sendFilesToServer(self.filenames[0][i])
             self.outputReady = "Your files are being processed..."
             self.consoleOutput()
+            data = self.sock.recv(1024)
+            self.outputReady(data.decode())
+            self.consoleOutput()
             self.DisconnectToServer()
         except:
             self.outputReady = "Your files failed to be uploaded"
@@ -268,7 +271,7 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.115.181", 10000)
+            self.server_address = ("10.145.7.162", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
@@ -326,8 +329,9 @@ class App(QWidget):
     def checkConnection(self):
         try:
             self.isItTrained()
-            self.serverConnection = "Server is working"
-            self.consoleOutput()
+            if self.serverConnection != "Server is not working":
+                self.serverConnection = "Server is working"
+                self.consoleOutput()
             self.sock.close()
         except:
             pass
