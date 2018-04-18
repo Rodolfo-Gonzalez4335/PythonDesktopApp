@@ -29,9 +29,6 @@ class App(QWidget):
         screen_resolution = app.desktop().screenGeometry()
         width, height = screen_resolution.width(), screen_resolution.height()
         
-        print(sys.platform)
-        print(width)
-        print(height)
         
         if sys.platform == "darwin":
             self.initUI()
@@ -246,13 +243,18 @@ class App(QWidget):
             f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
+                time.sleep(0.1)
+            print("got here")
+            self.sock.sendall("END OF FILE SENDING".encode())
             self.outputReady = "Your files are being processed..."
             self.consoleOutput()
+            self.ConnectToServer()
             data = self.sock.recv(1024)
-            self.outputReady(data.decode())
+            self.outputReady = (str(data.decode()))
             self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Your files failed to be uploaded"
             self.consoleOutput()
 
@@ -271,13 +273,14 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.7.162", 10000)
+            self.server_address = ("10.145.40.129", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
         #self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.serverConnection = "Server is not connected"
             self.consoleOutput()
 
@@ -296,7 +299,8 @@ class App(QWidget):
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
             self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Printing failed"
             self.consoleOutput()
 
@@ -347,8 +351,7 @@ class App(QWidget):
             # f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
-                print(i)
-            time.sleep(0.1)
+                time.sleep(0.1)
             self.sock.sendall("END OF FILE SENDING".encode())
             data = self.sock.recv(1024)
             if data:
