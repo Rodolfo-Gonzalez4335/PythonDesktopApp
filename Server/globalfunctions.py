@@ -14,6 +14,7 @@ def moveFilesToFilePath(path, newPath):
     for filename in os.listdir(path):
          training_set = os.path.join(os.getcwd(), newPath)
          shutil.copy(path+filename,training_set)
+
 def cleanString(incomingString):
     newstring = incomingString
     newstring = newstring.replace("!","")
