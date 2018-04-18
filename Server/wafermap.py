@@ -2,7 +2,7 @@
 #2/21/18
 #Rodolfo Gonzalez
 
-class wafermappingsignature:
+class wafermap:
 
     def __init__(self):
         self.filetimestamp = "NA"
