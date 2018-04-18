@@ -21,14 +21,107 @@ class App(QWidget):
         self.trained = ""
         self.outputReady = ""
         self.hasCorrected = ""
-        self.initUI()
+        
+        self.x = 0
+        self.y = 0
+        self.z = 0
+        
+        screen_resolution = app.desktop().screenGeometry()
+        width, height = screen_resolution.width(), screen_resolution.height()
+        
+        
+        if sys.platform == "darwin":
+            self.initUI()
+        elif width < 2100 and height < 1500:
+            self.x = 200
+            self.y = 600
+            self.z = 100
+            self.windowsGui()
+        else:
+            self.windowsGui()
+
+    def windowsGui(self):
+        #background image
+        label = QLabel(self)
+#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
+#        label.setPixmap(pixmap)
+#        self.resize(pixmap.width(), pixmap.height())
+
+        ## show plot button attributes
+        self.showPlotUpload = QPushButton("Show Plot", self)
+        self.showPlotUpload.move(160, 145)
+        self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
+        
+        #App components
+        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Classification Tool</h1>", self)
+        self.line = QLabel("<b>_______________________________________________________________________________________________________________________________________________________________________________________________________________</b>", self)
+        self.fileName = QLabel("<b>File Name: </b>", self)
+        self.txtType = QLabel("<b>.txt files only </b>", self)
+        self.correcTitle = QLabel("<h3>User Correction: </h3>", self)
+        self.fileNameBox = QLineEdit(self)
+        self.fileNameBox.setReadOnly(True)
+        self.fileNameBox.setFixedWidth(800)
+        
+        self.verticalLine = self.verticalFuncWin()
+        
+        self.consoleField = QTextEdit(self)
+        self.consoleField.setReadOnly(True)
+        self.consoleField.setFixedSize(2100-self.x,300-self.z)
+        
+        self.comboBox = QComboBox(self)
+        self.comboBox.addItems(["Edge", "Electrode", "Hotspot", "Large Edge", "Probe Marks", "Repeater", "Ring", "Scratch", "Slides", "Spin", "Spray", "Streak"])
+        
+        
+        #Buttons Name
+        self.inputButton = QPushButton("Browse", self)
+        self.printButton =  QPushButton("Print Reports", self)
+        self.uploadButton = QPushButton("Upload", self)
+        self.trainButton = QPushButton("Train", self)
+        self.connectButton = QPushButton("Check Connection", self)
+        self.userCorrect = QPushButton("Correction", self)
+        
+        #Title placement
+        self.title.move(15,10)
+        self.line.move(10, 35)
+        
+        #Components placement
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(160, 80)
+        self.inputButton.move(975, 75)
+        self.txtType.move(160, 110)
+        self.uploadButton.move(975, 145)
+        self.printButton.move(160, 600-self.z)
+        self.trainButton.move(360, 600-self.z)
+        self.connectButton.move(560, 600-self.z)
+        self.consoleField.move(0, 1200-self.y)
+        self.correcTitle.move(1450-(self.z), 60)
+        self.comboBox.move(1450-(self.z), 120)
+        self.userCorrect.move(1450-(self.z), 180)
+        
+        
+        #Buttons Action
+        self.inputButton.clicked.connect(self.openFileNamesDialog)
+        self.uploadButton.clicked.connect(self.uploadFunc)
+        self.printButton.clicked.connect(self.printReport)
+        self.trainButton.clicked.connect(self.trainMachine)
+        self.connectButton.clicked.connect(self.checkConnection)
+        self.userCorrect.clicked.connect(self.uCorrection)
+        
+        #window size
+        self.setFixedSize(2100-self.x, 1500-self.y)
+        
+        
+        #Layout
+        self.consoleOutput()
+        self.setWindowTitle("Senior Project Tool")
+        self.show()
 
     def initUI(self):
         #background image
         label = QLabel(self)
-        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
-        label.setPixmap(pixmap)
-        self.resize(pixmap.width(), pixmap.height())
+#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
+#        label.setPixmap(pixmap)
+#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
@@ -36,7 +129,7 @@ class App(QWidget):
         self.showPlotUpload.clicked.connect(self.showPlotUploadFunc)
 
         #App components
-        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Tool</h1>", self)
+        self.title = QLabel("<h1>\t\t\t Wafer Map Signature Classification Tool</h1>", self)
         self.line = QLabel("<b>_______________________________________________________________________________________________________________________________________________________________________________________________________________</b>", self)
         self.fileName = QLabel("<b>File Name: </b>", self)
         self.txtType = QLabel("<b>.txt files only </b>", self)
@@ -57,7 +150,7 @@ class App(QWidget):
 
         #Buttons Name
         self.inputButton = QPushButton("Browse", self)
-        self.printButton =  QPushButton("Print Report", self)
+        self.printButton =  QPushButton("Print Reports", self)
         self.uploadButton = QPushButton("Upload", self)
         self.trainButton = QPushButton("Train", self)
         self.connectButton = QPushButton("Check Connection", self)
@@ -150,10 +243,18 @@ class App(QWidget):
             f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
-            self.outputReady = "Your files are ready to be printed"
+                time.sleep(0.1)
+            print("got here")
+            self.sock.sendall("END OF FILE SENDING".encode())
+            self.outputReady = "Your files are being processed..."
+            self.consoleOutput()
+            self.ConnectToServer()
+            data = self.sock.recv(1024)
+            self.outputReady = (str(data.decode()))
             self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Your files failed to be uploaded"
             self.consoleOutput()
 
@@ -165,8 +266,6 @@ class App(QWidget):
 
     def DisconnectToServer(self):
         self.sock.close()
-        self.serverConnection = "You are now disconnected from the server"
-        self.consoleOutput()
 
     def ConnectToServer(self):
         try:
@@ -174,13 +273,14 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.115.181", 10000)
+            self.server_address = ("10.145.40.129", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
         #self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.serverConnection = "Server is not connected"
             self.consoleOutput()
 
@@ -199,7 +299,8 @@ class App(QWidget):
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
             self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Printing failed"
             self.consoleOutput()
 
@@ -226,13 +327,15 @@ class App(QWidget):
                 self.trained = "Machine has not been trained yet"
             self.consoleOutput()
         except:
-            pass
+            self.serverConnection = "Server is not working"
+            self.consoleOutput()
 
     def checkConnection(self):
         try:
             self.isItTrained()
-            self.serverConnection = "Server is working"
-            self.consoleOutput()
+            if self.serverConnection != "Server is not working":
+                self.serverConnection = "Server is working"
+                self.consoleOutput()
             self.sock.close()
         except:
             pass
@@ -248,8 +351,7 @@ class App(QWidget):
             # f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
-                print(i)
-            time.sleep(0.1)
+                time.sleep(0.1)
             self.sock.sendall("END OF FILE SENDING".encode())
             data = self.sock.recv(1024)
             if data:
@@ -272,6 +374,14 @@ class App(QWidget):
         x = 600
         y = 45
         while y < 450:
+            some = QLabel("<b>|</b>", self)
+            some.move(x,y)
+            y=y+1
+
+    def verticalFuncWin(self):
+        x = 1400-self.x
+        y = 60
+        while y < 1200-self.x:
             some = QLabel("<b>|</b>", self)
             some.move(x,y)
             y=y+1
@@ -315,7 +425,5 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    app.setStyle(QStyleFactory.create('Windows'))
-    app.setPalette(QApplication.style().standardPalette())
     ex = App()
     sys.exit(app.exec_())
