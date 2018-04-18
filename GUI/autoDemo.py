@@ -29,9 +29,6 @@ class App(QWidget):
         screen_resolution = app.desktop().screenGeometry()
         width, height = screen_resolution.width(), screen_resolution.height()
         
-        print(sys.platform)
-        print(width)
-        print(height)
         
         if sys.platform == "darwin":
             self.initUI()
@@ -93,13 +90,13 @@ class App(QWidget):
         self.inputButton.move(975, 75)
         self.txtType.move(160, 110)
         self.uploadButton.move(975, 145)
-        self.printButton.move(160, 600)
-        self.trainButton.move(360, 600)
-        self.connectButton.move(560, 600)
+        self.printButton.move(160, 600-self.z)
+        self.trainButton.move(360, 600-self.z)
+        self.connectButton.move(560, 600-self.z)
         self.consoleField.move(0, 1200-self.y)
-        self.correcTitle.move(1450-(self.z*2), 60)
-        self.comboBox.move(1450-(self.z*2), 120)
-        self.userCorrect.move(1450-(self.z*2), 180)
+        self.correcTitle.move(1450-(self.z), 60)
+        self.comboBox.move(1450-(self.z), 120)
+        self.userCorrect.move(1450-(self.z), 180)
         
         
         #Buttons Action
@@ -111,7 +108,7 @@ class App(QWidget):
         self.userCorrect.clicked.connect(self.uCorrection)
         
         #window size
-        self.setFixedSize(2100-self.x, 1500-self.y-self.z)
+        self.setFixedSize(2100-self.x, 1500-self.y)
         
         
         #Layout
@@ -246,10 +243,18 @@ class App(QWidget):
             f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
+                time.sleep(0.1)
+            print("got here")
+            self.sock.sendall("END OF FILE SENDING".encode())
             self.outputReady = "Your files are being processed..."
             self.consoleOutput()
+            self.ConnectToServer()
+            data = self.sock.recv(1024)
+            self.outputReady = (str(data.decode()))
+            self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Your files failed to be uploaded"
             self.consoleOutput()
 
@@ -268,13 +273,14 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.115.181", 10000)
+            self.server_address = ("10.145.40.129", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
         #self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.serverConnection = "Server is not connected"
             self.consoleOutput()
 
@@ -293,7 +299,8 @@ class App(QWidget):
             self.outputReady = "Your report has been printed, go to GUI/Report_files"
             self.consoleOutput()
             self.DisconnectToServer()
-        except:
+        except Exception as e:
+            print(e)
             self.outputReady = "Printing failed"
             self.consoleOutput()
 
@@ -326,8 +333,9 @@ class App(QWidget):
     def checkConnection(self):
         try:
             self.isItTrained()
-            self.serverConnection = "Server is working"
-            self.consoleOutput()
+            if self.serverConnection != "Server is not working":
+                self.serverConnection = "Server is working"
+                self.consoleOutput()
             self.sock.close()
         except:
             pass
@@ -343,8 +351,7 @@ class App(QWidget):
             # f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
-                print(i)
-            time.sleep(0.1)
+                time.sleep(0.1)
             self.sock.sendall("END OF FILE SENDING".encode())
             data = self.sock.recv(1024)
             if data:
