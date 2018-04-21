@@ -6,7 +6,7 @@
 
 # Turn on debug mode.
 import cgitb
-from wafermappingsignature import wafermappingsignature
+from wafermap import wafermap
 import sys
 import os
 from datetime import datetime
@@ -18,8 +18,8 @@ class fileparsing:
     def __init__(self):
         self.lineOfNums = []
         self.defectdensity = "NA"
-        self.wafermappings = []
-        self.wafer = wafermappingsignature()
+        self.wafermapList = []
+        self.wafer = wafermap()
 
     def parse(self):
         # print("got in")
@@ -32,7 +32,7 @@ class fileparsing:
                 except OSError:
                     print ("File could not be opened")
                 try:
-                    self.wafer = wafermappingsignature()
+                    self.wafer = wafermap()
                     for line in self.fileDescriptor:
                         if 'FileTimestamp' in line:
                             timestamp = line[14:-1]
@@ -69,8 +69,8 @@ class fileparsing:
                 finally:
                     # print(self.wafer)
                     self.fileDescriptor.close()
-                    self.wafermappings.append(self.wafer)
-                    # print(self.wafermappings)
+                    self.wafermapList.append(self.wafer)
+                    # print(self.wafermapList)
 
     def getDefectDensity(self, line):
         list = line.strip(' ').split(' ')
@@ -119,23 +119,22 @@ class fileparsing:
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")
 
-        for wafer in self.wafermappings:
+        for wafer in self.wafermapList:
             timestamp = wafer.filetimestamp
             f=open(os.path.join(dir_path, timestamp+".txt"),'w')
             f.write(str(wafer))
             f.close()
-        # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
 
-    def addClassfication(self, classification):
+    def addclassiFication(self, classification):
         # print (classification)
-        for wafer in self.wafermappings:
+        for wafer in self.wafermapList:
             # print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
             if (wafer.filetimestamp==classification[1]):
-                wafer.addClassfication(classification[0])
+                wafer.addclassiFication(classification[0])
                 return
 
     def sendReport(self, i):
-        if i < len(self.wafermappings):
-            return str(self.wafermappings[i])
+        if i < len(self.wafermapList):
+            return str(self.wafermapList[i])
         else:
             return "DONE"

@@ -2,7 +2,7 @@
 #2/21/18
 #Rodolfo Gonzalez
 
-class wafermappingsignature:
+class wafermap:
 
     def __init__(self):
         self.filetimestamp = "NA"
@@ -16,7 +16,7 @@ class wafermappingsignature:
         self.defectList = []
         self.defectdensity = "NA"
         self.classification = "NA"
-    
+
     def addTimeStamp(self,timestamp):
         self.filetimestamp = timestamp
 
@@ -50,7 +50,7 @@ class wafermappingsignature:
     def addtoDefectList(self, defectlist):
         self.defectList += defectlist
 
-    def addClassfication(self, classification):
+    def addclassiFication(self, classification):
         self.classification = classification
 
     def addSetupID(self,setupid):
