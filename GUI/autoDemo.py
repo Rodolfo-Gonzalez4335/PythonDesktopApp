@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox, QStyleFactory
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QLabel, QGridLayout, QFrame, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox, QStyleFactory, QMessageBox
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import QDir, Qt, QLine
 import socket
@@ -79,6 +79,7 @@ class App(QWidget):
         self.trainButton = QPushButton("Train", self)
         self.connectButton = QPushButton("Check Connection", self)
         self.userCorrect = QPushButton("Correction", self)
+        self.helpButton = QPushButton("Help", self)
         
         #Title placement
         self.title.move(15,10)
@@ -97,6 +98,7 @@ class App(QWidget):
         self.correcTitle.move(1450-(self.z), 60)
         self.comboBox.move(1450-(self.z), 120)
         self.userCorrect.move(1450-(self.z), 180)
+        self.helpButton.move(1450-(self.z), 300)
         
         
         #Buttons Action
@@ -106,6 +108,7 @@ class App(QWidget):
         self.trainButton.clicked.connect(self.trainMachine)
         self.connectButton.clicked.connect(self.checkConnection)
         self.userCorrect.clicked.connect(self.uCorrection)
+        self.helpButton.clicked.connect(self.helpFunct)
         
         #window size
         self.setFixedSize(2100-self.x, 1500-self.y)
@@ -155,6 +158,7 @@ class App(QWidget):
         self.trainButton = QPushButton("Train", self)
         self.connectButton = QPushButton("Check Connection", self)
         self.userCorrect = QPushButton("Correction", self)
+        self.helpButton = QPushButton("Help", self)
 
         #Title placement
         self.title.move(15,10)
@@ -173,6 +177,7 @@ class App(QWidget):
         self.correcTitle.move(620, 60)
         self.comboBox.move(630, 120)
         self.userCorrect.move(630, 150)
+        self.helpButton.move(630, 250)
 
 
         #Buttons Action
@@ -182,6 +187,7 @@ class App(QWidget):
         self.trainButton.clicked.connect(self.trainMachine)
         self.connectButton.clicked.connect(self.checkConnection)
         self.userCorrect.clicked.connect(self.uCorrection)
+        self.helpButton.clicked.connect(self.helpFunct)
 
         self.setFixedSize(820, 600)
 
@@ -421,6 +427,16 @@ class App(QWidget):
 
         #join all parts to make final string
         return (total_data)
+
+    def helpFunct(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Question)
+                
+        msg.setText("This is a message box")
+        msg.setInformativeText("This is additional information")
+        msg.setWindowTitle("MessageBox demo")
+        msg.setDetailedText("The details are as follows:")
+        retval = msg.exec_()
 
 if __name__ == '__main__':
 
