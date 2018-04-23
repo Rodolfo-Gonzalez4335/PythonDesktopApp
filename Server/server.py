@@ -38,7 +38,7 @@ class Server(fileparsing):
         classifier.add(AveragePooling2D(pool_size = (2, 2)))
         classifier.add(Flatten())
         classifier.add(Dense(units = 128, activation = 'relu'))  # Experiment with different powers of 2 for units
-        classifier.add(Dense(units = 9, activation = 'sigmoid'))
+        classifier.add(Dense(units = 13, activation = 'sigmoid'))
         classifier.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
         train_datagen = ImageDataGenerator(rescale = 1./255,
         shear_range = 0.2,
