@@ -314,7 +314,6 @@ class App(QWidget):
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
                 time.sleep(0.1)
-            print("got here")
             self.sock.sendall("END OF FILE SENDING".encode())
             self.outputReady = "Your files are being processed..."
             self.consoleOutput()
@@ -524,6 +523,14 @@ class App(QWidget):
                 self.showNormal1()
             else:
                 self.showcaseUI()
+        if e.key() == Qt.Key_B:
+            self.openFileNamesDialog()
+        if e.key() == Qt.Key_C:
+            self.checkConnection()
+        if e.key() == Qt.Key_T:
+            self.trainMachine()
+        if e.key() == Qt.Key_P:
+            self.printReport()
 
 if __name__ == '__main__':
 
