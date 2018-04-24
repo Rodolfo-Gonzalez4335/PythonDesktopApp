@@ -280,7 +280,7 @@ class App(QWidget):
                         linelist = line.strip(' ').split(' ')
                         x.append(float(linelist[1]) + (float(linelist[3])*1000))
                         y.append(float(linelist[2]) + (float(linelist[4])*1000))
-            plt.figure(figsize = (10, 10))
+            plt.figure(figsize = (7, 7))
             plt.scatter(x, y)
             frame1 = plt.gca()
             frame1.axes.xaxis.set_ticklabels([])
