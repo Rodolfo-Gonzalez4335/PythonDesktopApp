@@ -258,6 +258,71 @@ class App(QWidget):
         self.helpButton.move(630, 250)
     
         self.showNormal()
+    
+#-------------------------------------------------------------------
+    def showcaseWinUI(self):
+    
+        self.showPlotUpload.move(730, 75)
+        self.fileNameBox.setFixedWidth(500)
+        self.consoleField.setFixedSize(1280, 150)
+        
+        
+        #Title placement
+        self.title.move(15,10)
+        self.line.move(10, 35)
+        
+        #Components placement
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(120, 80)
+        self.inputButton.move(630, 75)
+        self.txtType.move(120, 110)
+        self.uploadButton.move(630, 105)
+        
+        self.printButton.move(120, 350)
+        self.trainButton.move(280, 350)
+        self.connectButton.move(380, 350)
+        
+        self.consoleField.move(0, 650)
+        self.correcTitle.move(970, 60)
+        self.comboBox.move(990, 120)
+        self.userCorrect.move(990, 150)
+        self.helpButton.move(1100, 400)
+        
+        
+        
+        self.showFullScreen()
+    
+#---------------------------------------------------------------------
+    
+    
+    def showNormalWin(self):
+        
+        self.showPlotUpload.move(160, 145)
+        self.fileNameBox.setFixedWidth(800)
+        self.consoleField.setFixedSize(2100-self.x,300-self.z)
+        
+        #Title placement
+        self.title.move(15,10)
+        self.line.move(10, 35)
+        
+        #Components placement
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(160, 80)
+        self.inputButton.move(975, 75)
+        self.txtType.move(160, 110)
+        self.uploadButton.move(975, 145)
+        self.printButton.move(160, 600-self.z)
+        self.trainButton.move(360, 600-self.z)
+        self.connectButton.move(560, 600-self.z)
+        self.consoleField.move(0, 1200-self.y)
+        self.correcTitle.move(1450-(self.z), 60)
+        self.comboBox.move(1450-(self.z), 120)
+        self.userCorrect.move(1450-(self.z), 180)
+        self.helpButton.move(1450-(self.z), 300)
+    
+        self.showNormal()
+
+    
 
         
 
@@ -519,10 +584,17 @@ class App(QWidget):
         if e.key() == Qt.Key_Escape:
             self.close()
         if e.key() == Qt.Key_F:
-            if self.isFullScreen():
-                self.showNormal1()
+            if sys.platform == "darwin":
+                if self.isFullScreen():
+                    self.showNormalMac()
+                else:
+                    self.showcaseUI()
             else:
-                self.showcaseUI()
+                if self.isFullScreen():
+                    self.showNormalWin()
+                else:
+                    self.showcaseWinUI()
+            
         if e.key() == Qt.Key_B:
             self.openFileNamesDialog()
         if e.key() == Qt.Key_C:
