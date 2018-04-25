@@ -233,6 +233,35 @@ class App(QWidget):
     
     def showNormalMac(self):
         
+        self.showPlotUpload.move(200, 145)
+        self.fileNameBox.setFixedWidth(300)
+        self.consoleField.setFixedSize(820,150)
+                    
+                    
+        #Title placement
+        self.title.move(15,10)
+        self.line.move(10, 35)
+        
+        #Components placement
+        self.fileName.move(25, 80)
+        self.fileNameBox.move(120, 80)
+        self.inputButton.move(430, 75)
+        self.txtType.move(120, 110)
+        self.uploadButton.move(300, 145)
+        self.printButton.move(40, 300)
+        self.trainButton.move(200, 300)
+        self.connectButton.move(300, 300)
+        self.consoleField.move(0, 450)
+        self.correcTitle.move(620, 60)
+        self.comboBox.move(630, 120)
+        self.userCorrect.move(630, 150)
+        self.helpButton.move(630, 250)
+            
+        self.showNormal()
+    
+    #-------------------------------------------------------------------
+    def showcaseWinUI(self):
+    
         self.showPlotUpload.move(130, 200)
         self.fileNameBox.setFixedWidth(800)
         self.consoleField.setFixedSize(2736, 350)
@@ -258,39 +287,6 @@ class App(QWidget):
         self.comboBox.move(2100, 120)
         self.userCorrect.move(2100, 250)
         self.helpButton.move(2100, 600)
-        
-        
-        
-        self.showFullScreen()
-    
-    #-------------------------------------------------------------------
-    def showcaseWinUI(self):
-    
-        self.showPlotUpload.move(730, 75)
-        self.fileNameBox.setFixedWidth(500)
-        self.consoleField.setFixedSize(1280, 150)
-        
-        
-        #Title placement
-        self.title.move(15,10)
-        self.line.move(10, 35)
-        
-        #Components placement
-        self.fileName.move(25, 80)
-        self.fileNameBox.move(120, 80)
-        self.inputButton.move(630, 75)
-        self.txtType.move(120, 110)
-        self.uploadButton.move(630, 105)
-        
-        self.printButton.move(120, 350)
-        self.trainButton.move(280, 350)
-        self.connectButton.move(380, 350)
-        
-        self.consoleField.move(0, 650)
-        self.correcTitle.move(970, 60)
-        self.comboBox.move(990, 120)
-        self.userCorrect.move(990, 150)
-        self.helpButton.move(1100, 400)
         
         
         
