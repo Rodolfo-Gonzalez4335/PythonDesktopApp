@@ -231,7 +231,7 @@ class App(QWidget):
         self.showFullScreen()
     
     
-    def showNormal1(self):
+    def showNormalMac(self):
         
         self.showPlotUpload.move(130, 200)
         self.fileNameBox.setFixedWidth(800)
