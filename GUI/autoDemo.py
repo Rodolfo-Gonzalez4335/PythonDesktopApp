@@ -368,6 +368,11 @@ class App(QWidget):
             self.sock.sendto(message, self.server_address)
 
     def openFileNamesDialog(self):
+        self.serverConnection = ""
+        self.trained = ""
+        self.outputReady = ""
+        self.hasCorrected = ""
+        self.consoleOutput()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self.filenames = QFileDialog.getOpenFileNames(self,"Upload Files", "","Text files (*.txt)", options=options)
@@ -538,7 +543,7 @@ class App(QWidget):
             some.move(x,y)
             y=y+1
 
-def recv_timeout(self,timeout=2):
+    def recv_timeout(self,timeout=2):
         #make socket non blocking
         self.sock.setblocking(0)
 
