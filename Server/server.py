@@ -183,7 +183,6 @@ class Server(fileparsing):
             i= i+1
             while True:
                 if "END OF FILE SENDING" in data_decoded:
-                    print(data_decoded)
                     f.close()
                     break
 
@@ -203,8 +202,6 @@ class Server(fileparsing):
                         f=open(os.path.join(dir_path, 'file_'+ str(i)+".txt"),'w')
                         i= i+1
                         f.write(first_and_second_file[1])
-                    # else:
-                    #     print("file number: "+ i+ "\n"+first_and_second_file[1])
                 else:
                     f.write(data_decoded)
                 data = self.connection.recv(1024)
@@ -212,17 +209,17 @@ class Server(fileparsing):
 
             return True
         except Exception as e:
+            print("Exception in receive and write files")
             print (e)
-            print("receive and write files")
             return False
 
     def readCommands(self):
+        print("\n\n\n\nServer has been started")
+        boolean=True
         try:
             while True:
-                # Wait for a connection
-                # print ('waiting for a connection')
                 self.connection, client_address = self.sock.accept()
-                # print (sys.stderr, 'connection from', client_address)
+                print("Server connected to the following client address: "+ str(client_address))
                 data = self.connection.recv(1024)
                 data_decoded = data.decode()
                 if "Send Report" in data_decoded:
@@ -239,9 +236,11 @@ class Server(fileparsing):
                 elif not data:
                     pass
                 elif "Correction" in data_decoded:
+                    print("Starting correction")
+
                     data = self.connection.recv(1024)
                     data_decoded = data.decode()
-                    # print(data_decoded)
+
                     if (self.correction(data_decoded)):
                         self.connection.sendall("Succesfully made correction".encode("utf-8"))
                     else:
@@ -251,26 +250,26 @@ class Server(fileparsing):
                     imagesPath =os.path.join(os.getcwd(), "classified_images/")
                     movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
                     moveFilesToFilePath(imagesPath,movePath)
-                    # print("Connection Closed")
+                    print("Finished correction")
                 else:
-
+                    print("Receiving files to classify")
                     self.receiveAndWriteFiles(data,data_decoded)
                     self.connection.close()
-                    print("Wrote files")
+                    print("Finished receiving files")
+                    print("Plotting defects")
                     self.createImagesFromTxt()
-                    print("Created Images")
+                    print("Finished plotting defects")
                     self.klaParser.parse()
+                    print("Classifying plots")
                     self.classifyDefects()
-                    print("Classified Images")
+                    print("Finished classifying plots, report is now ready")
                     self.connection, client_address= self.sock.accept()
                     self.connection.sendall("Reports have been generated".encode("utf-8"))
-                    print("Message sent to client ")
                     self.connection.close()
         except Exception as e:
+            print("Exception in read commands")
             print(e)
-            print("Read COmmands")
             self.connection.close()
-
 
     def createImagesFromTxt(self):
         dir_path = os.path.join(os.getcwd(),"classified_images/")
@@ -282,6 +281,7 @@ class Server(fileparsing):
                 if filename.endswith(".txt") :
                     image_path = self.plotFile(dir_path+ filename,filename)
         except Exception as e:
+            print("Exception in create Images")
             print (e)
 
     def classifyDefects(self):
@@ -304,58 +304,20 @@ class Server(fileparsing):
                     classifier.load_weights("model.h5")
                     result = classifier.predict(test_image)
                     timestamp = filename.replace(".png","")
-                    # make sure classfications are added in timestamp order
-                    # print(timestamp)
+
                     classifications.append([self.prediction(result),timestamp])
 
-            #adding the classification to the wafer mappings
+            #adding the classification to the wafer mappings which reside in the fileparsing class.
             for classification in classifications:
                 self.klaParser.addclassiFication(classification)
 
-            #wafermappings is the data structure that has all the signatures
-            #generateReport(self.klaParser)
             self.klaParser.saveWaferMappings()
-            # print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+
         except Exception as e:
+            print("Exception in classify defects")
             print(e)
 
-    def recv_timeout(self,timeout=2):
-        #make socket non blocking
-        try:
-            self.connection.setblocking(0)
 
-            #total data partwise in an array
-            total_data=[];
-            data='';
-
-            #beginning time
-            begin=time.time()
-            while 1:
-                #if you got some data, then break after timeout
-                if total_data and time.time()-begin > timeout:
-                    break
-
-                #if you got no data at all, wait a little longer, twice the timeout
-                elif time.time()-begin > timeout*2:
-                    break
-
-                #recv something
-                try:
-                    data = self.connection.recv(1024)
-                    if data:
-                        total_data.append(data.decode())
-                        #change the beginning time for measurement
-                        begin=time.time()
-                    else:
-                        #sleep for sometime to indicate a gap
-                        time.sleep(0.1)
-                except:
-                    pass
-        except Exception as e:
-            print (e)
-
-        #join all parts to make final string
-        return (total_data)
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 server = Server();
 server.readCommands();
