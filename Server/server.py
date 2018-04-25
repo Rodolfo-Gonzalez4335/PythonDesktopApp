@@ -259,6 +259,7 @@ class Server(fileparsing):
                     print("Plotting defects")
                     self.createImagesFromTxt()
                     print("Finished plotting defects")
+                    self.klaParser=fileparsing()
                     self.klaParser.parse()
                     print("Classifying plots")
                     self.classifyDefects()
