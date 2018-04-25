@@ -233,9 +233,9 @@ class App(QWidget):
     
     def showNormal1(self):
         
-        self.showPlotUpload.move(200, 145)
-        self.fileNameBox.setFixedWidth(300)
-        self.consoleField.setFixedSize(820,150)
+        self.showPlotUpload.move(130, 200)
+        self.fileNameBox.setFixedWidth(800)
+        self.consoleField.setFixedSize(2736, 350)
         
         
         #Title placement
@@ -243,23 +243,27 @@ class App(QWidget):
         self.line.move(10, 35)
         
         #Components placement
-        self.fileName.move(25, 80)
-        self.fileNameBox.move(120, 80)
-        self.inputButton.move(430, 75)
-        self.txtType.move(120, 110)
-        self.uploadButton.move(300, 145)
-        self.printButton.move(40, 300)
-        self.trainButton.move(200, 300)
-        self.connectButton.move(300, 300)
-        self.consoleField.move(0, 450)
-        self.correcTitle.move(620, 60)
-        self.comboBox.move(630, 120)
-        self.userCorrect.move(630, 150)
-        self.helpButton.move(630, 250)
+        self.fileName.move(25, 80) #File Name
+        self.fileNameBox.move(150, 80) #browse empty text box
+        self.inputButton.move(970, 70) #browse
+        self.txtType.move(150, 110) #.txt file only
+        self.uploadButton.move(970, 200) #upload
+        
+        self.printButton.move(300, 750)
+        self.trainButton.move(500, 750)
+        self.connectButton.move(700, 750)
+        
+        self.consoleField.move(0, 1474)
+        self.correcTitle.move(2100, 60)
+        self.comboBox.move(2100, 120)
+        self.userCorrect.move(2100, 250)
+        self.helpButton.move(2100, 600)
+        
+        
+        
+        self.showFullScreen()
     
-        self.showNormal()
-    
-#-------------------------------------------------------------------
+    #-------------------------------------------------------------------
     def showcaseWinUI(self):
     
         self.showPlotUpload.move(730, 75)
@@ -407,7 +411,7 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.117.235", 10000)
+            self.server_address = ("localhost", 10000)
             #self.server_address = ("10.145.250.235", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
@@ -527,14 +531,14 @@ class App(QWidget):
             y=y+1
 
     def verticalFuncWin(self):
-        x = 1400-self.x
-        y = 60
-        while y < 1200-self.x:
+        x = 2000-self.x
+        y = 55
+        while y < 1524-self.x:
             some = QLabel("<b>|</b>", self)
             some.move(x,y)
             y=y+1
 
-    def recv_timeout(self,timeout=2):
+def recv_timeout(self,timeout=2):
         #make socket non blocking
         self.sock.setblocking(0)
 
