@@ -21,6 +21,7 @@ class fileparsing:
         self.wafermapList = []
         self.wafer = wafermap()
 
+    #Parses a KLA file.needs more
     def parse(self):
         # print("got in")
         i = 1
@@ -116,6 +117,8 @@ class fileparsing:
             index = index+1
         # print(self.wafermap)
 
+    #Saves a data structure in
+
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")
 
@@ -125,6 +128,10 @@ class fileparsing:
             f.write(str(wafer))
             f.close()
 
+    #Adds a classification to the the wafermap list. It uses a unique identifier
+    #(in this case we assumed a timestamp as it) to give the corresponding
+    #wafermap.
+
     def addclassiFication(self, classification):
         # print (classification)
         for wafer in self.wafermapList:
@@ -132,6 +139,8 @@ class fileparsing:
             if (wafer.filetimestamp==classification[1]):
                 wafer.addclassiFication(classification[0])
                 return
+
+    #Returns the string representation of the wafermap data structure
 
     def sendReport(self, i):
         if i < len(self.wafermapList):

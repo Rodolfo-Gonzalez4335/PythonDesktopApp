@@ -1,6 +1,8 @@
 import os
 import shutil
 
+#Deletes all files in a specific directory path.
+
 def deleteFiles(path):
     for file in os.listdir(path):
         file_path = os.path.join(path, file)
@@ -10,10 +12,15 @@ def deleteFiles(path):
         except Exception as e:
             print(e)
 
+#Moves files all files from one path to another.
+
 def moveFilesToFilePath(path, newPath):
     for filename in os.listdir(path):
          training_set = os.path.join(os.getcwd(), newPath)
          shutil.copy(path+filename,training_set)
+
+#cleans a string it will return a string with only numbers characters and
+#underscores.
 
 def cleanString(incomingString):
     newstring = incomingString

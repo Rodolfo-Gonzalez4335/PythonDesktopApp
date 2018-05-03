@@ -31,6 +31,8 @@ class Server(fileparsing):
         self.klaParser = fileparsing()
         # print (sys.stderr, 'starting up on %s port %s' % self.server_address)
 
+    #Trains the covolutional neural network.
+
     def training(self):
         print("Training Neural Net")
         classifier = Sequential()
@@ -64,6 +66,8 @@ class Server(fileparsing):
         classifier.save_weights("model.h5")
         print("Finished Training")
 
+    #Similar to a case structure. It returns a desired string value.
+
     def prediction(self,result):
         if result[0][0] == 0:
             return 'edge_local'
@@ -84,8 +88,13 @@ class Server(fileparsing):
         elif result[0][0] == 8:
             return 'streaks'
 
+    #Returns a column in a matrix
+
     def column(self,matrix, i):
         return [row[i] for row in matrix]
+
+    #Creates a plot of a list of defects. After this it then saves the plot as as
+    #a png.
 
     def plotFile(self,file_path,file_name):
         try:
@@ -133,12 +142,18 @@ class Server(fileparsing):
         except Exception as e:
             print (e)
 
+    #returns true if server has trained the CNN.
+
     def isItTrained(self):
         dir_path = os.path.join(os.getcwd())
         for filename in os.listdir(dir_path):
             if filename.endswith(".h5"):
                 return True
         return False
+
+    #function receives a kla file and it will process it and creates an image of
+    #files received. After this is done it then sends pgs to the test set in the
+    #CNN.
 
     def correction(self, data_decoded):
         try:
@@ -150,11 +165,18 @@ class Server(fileparsing):
             data = self.connection.recv(1024)
             data_decoded = data.decode()
             self.receiveAndWriteFiles(data,data_decoded)
+            self.createImagesFromTxt()
+            imagesPath =os.path.join(os.getcwd(), "classified_images/")
+            movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
+            moveFilesToFilePath(imagesPath,movePath)
             return True
 
         except Exception as e:
             print(e)
             return False
+
+    #Function reads the report directory. The files are read and sent to a
+    #client.
 
     def sendReport(self):
         directory_path = os.path.join(os.getcwd(), "Report/")
@@ -168,9 +190,11 @@ class Server(fileparsing):
                 while(l):
                     self.connection.send(l)
                     l = f.read(1024)
-                #is this line of code necesarry? test without it
                 time.sleep(0.1);
                 f.close()
+
+    #Function receives files through a socket. It then stores each file received
+    #in the input files directory.
 
     def receiveAndWriteFiles(self, data,data_decoded):
         try:
@@ -213,6 +237,10 @@ class Server(fileparsing):
             print (e)
             return False
 
+    #Main function in server. It will stop running until a signal is given to it.
+    #It listens to incomming connections. It will then invoke different methods depending
+    #on the command given to it.
+
     def readCommands(self):
         print("\n\n\n\nServer has been started")
         boolean=True
@@ -234,6 +262,7 @@ class Server(fileparsing):
                     else:
                         self.connection.sendall("no".encode('utf-8'))
                 elif not data:
+                    self.connection.close()
                     pass
                 elif "Correction" in data_decoded:
                     print("Starting correction")
@@ -246,10 +275,6 @@ class Server(fileparsing):
                     else:
                         self.connection.sendall("Failed to send correction".encode("utf-8"))
                     self.connection.close()
-                    self.createImagesFromTxt()
-                    imagesPath =os.path.join(os.getcwd(), "classified_images/")
-                    movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
-                    moveFilesToFilePath(imagesPath,movePath)
                     print("Finished correction")
                 else:
                     print("Receiving files to classify")
@@ -272,6 +297,10 @@ class Server(fileparsing):
             print(e)
             self.connection.close()
 
+    #This function will iterate through the txt files in input files.
+    #It then invoke. plotfile function to create pngs.
+    #The pngs are stored in classified images directory.
+
     def createImagesFromTxt(self):
         dir_path = os.path.join(os.getcwd(),"classified_images/")
         deleteFiles(dir_path)
@@ -284,6 +313,9 @@ class Server(fileparsing):
         except Exception as e:
             print("Exception in create Images")
             print (e)
+
+    #Uses a conlutional neural network to classify defects. It then creates
+    # and saves a Report.
 
     def classifyDefects(self):
         try:
@@ -319,6 +351,5 @@ class Server(fileparsing):
             print(e)
 
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 server = Server();
 server.readCommands();
