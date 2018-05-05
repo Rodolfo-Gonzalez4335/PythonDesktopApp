@@ -21,7 +21,8 @@ class fileparsing:
         self.wafermapList = []
         self.wafer = wafermap()
 
-    #Parses a KLA file.needs more
+    #Parses a KLA file it also creates a wafermap object.
+
     def parse(self):
         # print("got in")
         i = 1
@@ -73,9 +74,13 @@ class fileparsing:
                     self.wafermapList.append(self.wafer)
                     # print(self.wafermapList)
 
+    #Function gets the defect density in the KLA file.
+
     def getDefectDensity(self, line):
         list = line.strip(' ').split(' ')
         return float(list[2])
+
+    #Parses throught the defect density in the KLA file.
 
     def parseDefectList(self):
         index=0;
@@ -117,7 +122,8 @@ class fileparsing:
             index = index+1
         # print(self.wafermap)
 
-    #Saves a data structure in
+    #Saves the string value of wafermap. The wafermap string value is the
+    #report.
 
     def saveWaferMappings(self):
         dir_path = os.path.join(os.getcwd(), "Report/")

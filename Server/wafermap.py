@@ -2,6 +2,8 @@
 #2/21/18
 #Rodolfo Gonzalez
 
+#Object structure that contains the classification of a KLA file.
+
 class wafermap:
 
     def __init__(self):
