@@ -2,6 +2,9 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+def get_column(matrix, i):
+    return [row[i] for row in matrix]
+
 def delete_files(path):
     for file in os.listdir(path):
         file_path = os.path.join(path, file)
@@ -9,14 +12,14 @@ def delete_files(path):
             if os.path.isfile(file_path):
                 os.unlink(file_path)
         except Exception as e:
-            print(e)
+            print('[delete_files] ' + e)
 
 
 def plot_file(file_name):
 	try:
-		file = open(file_path,"r")
+		file = open('files_to_plot/' + file_name,"r")
 		array_of_nums = []
-
+		
 		for line in file:
 			if 'DefectList' in line:
 				for line in file:
@@ -34,10 +37,10 @@ def plot_file(file_name):
 					array_of_nums.append(nums)
 				continue
 		file.close()
-		x_offs = np.array(self.column(array_of_nums,3))
-		y_offs = np.array(self.column(array_of_nums,4))
-		x_locs = np.array(self.column(array_of_nums,1))
-		y_locs = np.array(self.column(array_of_nums,2))
+		x_offs = np.array(get_column(array_of_nums, 3))
+		y_offs = np.array(get_column(array_of_nums, 4))
+		x_locs = np.array(get_column(array_of_nums, 1))
+		y_locs = np.array(get_column(array_of_nums, 2))
 		x = np.add(x_locs, 1000*x_offs)
 		y = np.add(y_locs, 1000*y_offs)
 		
@@ -47,15 +50,15 @@ def plot_file(file_name):
 		frame1 = plt.gca()
 		frame1.axes.xaxis.set_ticklabels([])
 		frame1.axes.yaxis.set_ticklabels([])
-		file_name= file_name.replace(".txt","")
+		file_name = file_name.replace(".txt","")
 		
-		plot_name = os.path.join(os.getcwd(), "plotted_images/", file_name)
+		plot_name = os.path.join(os.getcwd(), "plotted_files/", file_name)
 		plt.savefig('{}.png'.format(plot_name))
 		plt.close()
 	except Exception as e:
-		print (e)
+		print ('[plot_file] ' + e)
 
-def main:
+def main():
 	try:
 		dir_path = os.path.join(os.getcwd(), "files_to_plot/")
 		for filename in os.listdir(dir_path):
