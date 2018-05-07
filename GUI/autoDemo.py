@@ -41,11 +41,8 @@ class App(QWidget):
             self.windowsGui()
 
     def windowsGui(self):
-        #background image
+
         label = QLabel(self)
-#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
-#        label.setPixmap(pixmap)
-#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
@@ -120,11 +117,8 @@ class App(QWidget):
         self.show()
 
     def initUI(self):
-        #background image
+        
         label = QLabel(self)
-#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
-#        label.setPixmap(pixmap)
-#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
@@ -324,7 +318,7 @@ class App(QWidget):
 
     
 
-        
+#-----------------------------GUI stuff ended here--------------------------------------
 
     ## show plot functions
 
@@ -412,12 +406,10 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("localhost", 10000)
-            #self.server_address = ("10.145.250.235", 10000)
+            self.server_address = ("10.145.182.170", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
-        #self.DisconnectToServer()
         except Exception as e:
             print(e)
             self.serverConnection = "Server is not connected"
@@ -476,7 +468,6 @@ class App(QWidget):
             if self.serverConnection != "Server is not working":
                 self.serverConnection = "Server is working"
                 self.consoleOutput()
-        #self.sock.close()
         except:
             pass
 
@@ -488,7 +479,6 @@ class App(QWidget):
             self.sock.sendto(self.comboBox.currentText().encode('utf-8').lower(), self.server_address)
             self.fileNameBox.setText("")
             time.sleep(0.1)
-            # f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
                 time.sleep(0.1)
@@ -577,11 +567,14 @@ class App(QWidget):
 
     def helpFunct(self):
         msg = QMessageBox()
+        helpText = "To check whether the server computer is connected to your computer: Click the “Check Connection” button. The console at the bottom of the application will display “Server is not working” if the server is not connected. If the server is connected, the console will state that the “Server is working.” It will also include information about whether the defect signature classifier has been trained or not. \n\nTo train the defect signature classifier: Click the “Train” button. Wait until you receive the message “Training completed” on the console to continue. This operation will take a while, depending on the architecture of the classifier. Train the classifier whenever new training data has been added to the server computer, a correction was made using the “Correction” button (see below), or the machine has not been trained yet (which can be checked by clicking on the “Check Connection” button). \n\nTo view the defect distribution for a KLA file: "
+        helpText2 = "Click the “Browse” butto to select the KLA file that contains the defects you want to view (note that you may only select one file to view at a time). After selecting the file using “Browse,” click on the “Show plot” button below the address bar. A window will pop up showing the spatial distributions of the defects on the xy-plane. \n\nTo detect and classify any signatures present in the KLA file: Click the “Browse” button to select the KLA file or files that you want to classify. After selecting the file using “Browse,” click on the “Upload” button below the “Browse” button. Wait until you receive the message that “Reports have been generated.” To view the results of the classifications, click the “Print Reports” button. Wait until you receive the message “Your report has been printed, go to GUI/Report_files.” Then, go to <path-to-your-application-code>/Report_files to view your report(s), each of which will be named the same as the timestamp of your input "
+        helpText3 = "file(s). \nIf you know that the defect signature classifier gave you the wrong classification: Choose the input file that was misclassified by clicking “Browse” and selecting the file. On the right side of the application, under “User Correction,” choose the correct classification from the dropdown at the top. Then, click the “Correction” button. This will make the defect signature classifier less susceptible to misclassifying this signature in the future."
         msg.setIcon(QMessageBox.Question)
-                
+        
         msg.setText("This is a help box")
         msg.setInformativeText("This application can be used to train, use, and correct a defect signature classifier.")
-        msg.setDetailedText("To check whether the server computer is connected to your computer: Click the “Check Connection” button. The console at the bottom of the application will display “Server is not working” if the server is not connected. If the server is connected, the console will state that the “Server is working.” It will also include information about whether the defect signature classifier has been trained or not. \n\nTo train the defect signature classifier: Click the “Train” button. Wait until you receive the message “Training completed” on the console to continue. This operation will take a while, depending on the architecture of the classifier. Train the classifier whenever new training data has been added to the server computer, a correction was made using the “Correction” button (see below), or the machine has not been trained yet (which can be checked by clicking on the “Check Connection” button). \n\nTo view the defect distribution for a KLA file: Click the “Browse” button to select the KLA file that contains the defects you want to view (note that you may only select one file to view at a time). After selecting the file using “Browse,” click on the “Show plot” button below the address bar. A window will pop up showing the spatial distributions of the defects on the xy-plane. \n\nTo detect and classify any signatures present in the KLA file: Click the “Browse” button to select the KLA file or files that you want to classify. After selecting the file using “Browse,” click on the “Upload” button below the “Browse” button. Wait until you receive the message that “Reports have been generated.” To view the results of the classifications, click the “Print Reports” button. Wait until you receive the message “Your report has been printed, go to GUI/Report_files.” Then, go to <path-to-your-application-code>/Report_files to view your report(s), each of which will be named the same as the timestamp of your input file(s). \nIf you know that the defect signature classifier gave you the wrong classification: Choose the input file that was misclassified by clicking “Browse” and selecting the file. On the right side of the application, under “User Correction,” choose the correct classification from the dropdown at the top. Then, click the “Correction” button. This will make the defect signature classifier less susceptible to misclassifying this signature in the future.")
+        msg.setDetailedText(helpText + helpText2 + helpText3)
         
         retval = msg.exec_()
 
@@ -608,7 +601,10 @@ class App(QWidget):
             self.trainMachine()
         if e.key() == Qt.Key_P:
             self.printReport()
+        if e.key() == Qt.Key_H:
+            self.helpFunct()
 
+#--------------------------main function----------------------------
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
