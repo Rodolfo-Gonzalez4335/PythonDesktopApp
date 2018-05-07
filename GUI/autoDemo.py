@@ -41,11 +41,8 @@ class App(QWidget):
             self.windowsGui()
 
     def windowsGui(self):
-        #background image
+
         label = QLabel(self)
-#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434.jpg')
-#        label.setPixmap(pixmap)
-#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
@@ -120,11 +117,8 @@ class App(QWidget):
         self.show()
 
     def initUI(self):
-        #background image
+        
         label = QLabel(self)
-#        pixmap = QPixmap('yellow-pastel-paint-texture-1638434-1599x1066.jpg')
-#        label.setPixmap(pixmap)
-#        self.resize(pixmap.width(), pixmap.height())
 
         ## show plot button attributes
         self.showPlotUpload = QPushButton("Show Plot", self)
@@ -324,7 +318,7 @@ class App(QWidget):
 
     
 
-        
+#-----------------------------GUI stuff ended here--------------------------------------
 
     ## show plot functions
 
@@ -412,12 +406,10 @@ class App(QWidget):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Connect the socket to the port where the server is listening
-            self.server_address = ("10.145.145.137", 10000)
-            #self.server_address = ("10.145.250.235", 10000)
+            self.server_address = ("10.145.182.170", 10000)
             self.sock.connect(self.server_address)
             self.serverConnection = "You are now connected to the server"
             self.consoleOutput()
-        #self.DisconnectToServer()
         except Exception as e:
             print(e)
             self.serverConnection = "Server is not connected"
@@ -476,7 +468,6 @@ class App(QWidget):
             if self.serverConnection != "Server is not working":
                 self.serverConnection = "Server is working"
                 self.consoleOutput()
-        #self.sock.close()
         except:
             pass
 
@@ -488,7 +479,6 @@ class App(QWidget):
             self.sock.sendto(self.comboBox.currentText().encode('utf-8').lower(), self.server_address)
             self.fileNameBox.setText("")
             time.sleep(0.1)
-            # f = open(str(self.filenames[0][0]), 'r')
             for i in range(0, len(self.filenames[0])):
                 self.sendFilesToServer(self.filenames[0][i])
                 time.sleep(0.1)
@@ -614,6 +604,7 @@ class App(QWidget):
         if e.key() == Qt.Key_H:
             self.helpFunct()
 
+#--------------------------main function----------------------------
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
