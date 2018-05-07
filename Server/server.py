@@ -162,12 +162,12 @@ class Server(fileparsing):
             dir_path = os.path.join(os.getcwd(), "classified_images")
             deleteFiles(dir_path)
 
+            imagesPath =os.path.join(os.getcwd(), "classified_images/")
+            movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
             data = self.connection.recv(1024)
             data_decoded = data.decode()
             self.receiveAndWriteFiles(data,data_decoded)
             self.createImagesFromTxt()
-            imagesPath =os.path.join(os.getcwd(), "classified_images/")
-            movePath = os.path.join(os.getcwd(), "training_set/",data_decoded)
             moveFilesToFilePath(imagesPath,movePath)
             return True
 

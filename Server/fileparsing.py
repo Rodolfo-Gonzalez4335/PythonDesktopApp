@@ -138,7 +138,7 @@ class fileparsing:
     #(in this case we assumed a timestamp as it) to give the corresponding
     #wafermap.
 
-    def addclassiFication(self, classification):
+    def addclassiFicationToWafermapList(self, classification):
         # print (classification)
         for wafer in self.wafermapList:
             # print("CLASSIFICATION" + wafer.filetimestamp, classification[1])
